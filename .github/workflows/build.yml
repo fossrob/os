@@ -1,0 +1,86 @@
+# This is a basic workflow to help you get started with Actions
+
+name: build-os
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ${{ github. }}
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        major_version: [37, 38]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: Generate Tags
+        id: tags-generate
+        shell: bash
+        run: |
+          alias_tags=()
+          alias_tags+=("${{ matrix.major_version }}")
+          [[ "${{ matrix.is_latest }}" == "true" ]] && alias_tags+=("latest")
+          [[ "${{ matrix.is_stable }}" == "true" ]] && alias_tags+=("stable")
+          echo "alias_tags=${alias_tags[*]}" > $GITHUB_OUTPUT
+          echo "date=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
+        
+      - name: Buildah Build
+        id: image-build
+        uses: redhat-actions/buildah-build@v2
+        with:
+          # The name (reference) of the image to build
+          image: ${{ env.IMAGE_NAME }}
+          # The tags of the image to build. For multiple tags, seperate by whitespace. For example, "latest v1".
+          tags: |
+            ${{ steps.tags-generate.outputs.alias_tags }}
+            ${{ steps.generate-tags.outputs.date }}
+          # # The labels of the image to build. Seperate by newline. For example, "io.containers.capabilities=sys_admin,mknod".
+          # labels: # optional
+          # List of Containerfile paths (eg: ./Containerfile)
+          containerfiles: ./Containerfile
+          # List of --build-args to pass to buildah
+          build-args: FEDORA_MAJOR_VERSION=${{ matrix.major.version }}
+          # Set to true to build using the OCI image format instead of the Docker image format
+          oci: false
+
+      - name: Push To Registry
+        id: registry-push
+        uses: redhat-actions/push-to-registry@v2
+        env:
+          REGISTRY_URL: ghcr.io/${{ github.repository_owner }}
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ github.token }}
+        with:
+          # Name of the image/manifest to push (e.g. username/imagename or imagename)
+          image: ${{ steps.image-build.outputs.image }}
+          # 'The tag or tags of the image/manifest to push. For multiple tags, seperate by whitespace. For example, "latest v1"'
+          tags: ${{ steps.image-build.outputs.tags }}
+          # Hostname and optional namespace to push the image to (eg. quay.io/username or quay.io)
+          registry: ${{ env.REGISTRY_URL }}
+          # Username to use as credential to authenticate to the registry
+          username: ${{ env.REGISTRY_USER }}
+          # Password to use as credential to authenticate to the registry
+          password: ${{ env.REGISTRY_PASSWORD }}
+          # Extra args to be passed to podman push. Separate arguments by newline. Do not use quotes - @actions/exec will do the quoting for you.
+          extra-args: |
+            --disable-content-trust
