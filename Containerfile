@@ -6,6 +6,25 @@ COPY etc /etc
 
 RUN rpm-ostree override remove firefox firefox-langpacks
 
-RUN rm -rf /tmp/* /var/*
+RUN rpm-ostree install \
+      distrobox \
+      gnome-shell-extension-appindicator \
+      gnome-tweaks \
+      kitty kitty-bash-integration kitty-doc \
+      lm_sensors \
+      openssl \
+      tailscale \
+      vim \
+      virt-manager \
+    ;
+
+RUN echo "service configuration" && \
+      systemctl enable tailscaled.service && \
+    echo "done"
+
+RUN echo "clean up" $$ \
+      rm -f /etc/yum.repos.d/tailscale.repo && \
+      rm -rf /tmp/* /var/* && \
+    echo "done"
 
 RUN ostree container commit
