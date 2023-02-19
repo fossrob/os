@@ -59,7 +59,7 @@ jobs:
           # List of Containerfile paths (eg: ./Containerfile)
           containerfiles: ./Containerfile
           # List of --build-args to pass to buildah
-          build-args: FEDORA_MAJOR_VERSION=${{ matrix.major.version }}
+          build-args: FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
           # Set to true to build using the OCI image format instead of the Docker image format
           oci: false
 
