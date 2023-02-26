@@ -32,6 +32,9 @@ jobs:
           - major_version: 37
             is_latest: true
             is_stable: true
+          - major_version: 38
+            is_latest: true
+            is_stable: false
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:

@@ -8,8 +8,7 @@ COPY etc /etc
 
 RUN rpm-ostree install \
       distrobox \
-      gnome-shell-extension-appindicator \
-      gnome-tweaks \
+      gnome-shell-extension-appindicator gnome-tweaks \
       kitty kitty-bash-integration kitty-doc \
       just \
       lm_sensors \
