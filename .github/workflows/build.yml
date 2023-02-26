@@ -27,6 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        gpu: ['amd', 'nvidia']
         major_version: [37, 38]
         include:
           - major_version: 37
@@ -46,28 +47,30 @@ jobs:
         shell: bash
         run: |
           alias_tags=()
+          alias_tags+=("${{ matrix.gpu }}")
           alias_tags+=("${{ matrix.major_version }}")
           [[ "${{ matrix.is_latest }}" == "true" ]] && alias_tags+=("latest")
           [[ "${{ matrix.is_stable }}" == "true" ]] && alias_tags+=("stable")
           echo "alias_tags=${alias_tags[*]}" > $GITHUB_OUTPUT
-          echo "date=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
+          source_image="quay.io/fedora-ostree-desktops/silverblue:${{ matrix.major_version }}"
+          [[ "${{ matrix.gpu }}" == "nvidia" ]] && source_image="ghcr.io/ublue-os/silverblue-nvidia:${{ matrix.major_version }}"
+          echo "source_image=$source_image" >> $GITHUB_OUTPUT
 
       - name: Buildah Build
         id: image-build
         uses: redhat-actions/buildah-build@v2
         with:
           # The name (reference) of the image to build
-          image: ${{ env.IMAGE_NAME }}
+          image: ${{ env.IMAGE_NAME }}-${{ matrix.gpu }}
           # The tags of the image to build. For multiple tags, seperate by whitespace. For example, "latest v1".
           tags: |
             ${{ steps.tags-generate.outputs.alias_tags }}
-            ${{ steps.generate-tags.outputs.date }}
           # # The labels of the image to build. Seperate by newline. For example, "io.containers.capabilities=sys_admin,mknod".
           # labels: # optional
           # List of Containerfile paths (eg: ./Containerfile)
           containerfiles: ./Containerfile
           # List of --build-args to pass to buildah
-          build-args: FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
+          build-args: SOURCE_IMAGE=${{ steps.tags-generate.outputs.source_image }}
           # Set to true to build using the OCI image format instead of the Docker image format
           oci: false
 

@@ -1,6 +1,6 @@
-ARG FEDORA_MAJOR_VERSION=37
+ARG SOURCE_IMAGE=quay.io/fedora-ostree-desktops/silverblue:37
 
-FROM quay.io/fedora-ostree-desktops/silverblue:${FEDORA_MAJOR_VERSION}
+FROM $SOURCE_IMAGE
 
 RUN rpm-ostree override remove firefox firefox-langpacks
 
