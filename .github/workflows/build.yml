@@ -46,22 +46,34 @@ jobs:
         id: tags-generate
         shell: bash
         run: |
+          image_name="${{ env.IMAGE_NAME }}"
+          source_image="quay.io/fedora-ostree-desktops/silverblue:${{ matrix.major_version }}"
+
+          if [[ "${{ matrix.gpu }}" == "nvidia" ]]; then
+            image_name="${{ env.IMAGE_NAME }}-nvidia"
+            source_image="ghcr.io/ublue-os/silverblue-nvidia:${{ matrix.major_version }}"
+          fi
+
+          echo "image_name=$image_name" > $GITHUB_OUTPUT
+          echo "source_image=$source_image" >> $GITHUB_OUTPUT
+
           alias_tags=()
+
           alias_tags+=("${{ matrix.gpu }}")
           alias_tags+=("${{ matrix.major_version }}")
+
           [[ "${{ matrix.is_latest }}" == "true" ]] && alias_tags+=("latest")
           [[ "${{ matrix.is_stable }}" == "true" ]] && alias_tags+=("stable")
-          echo "alias_tags=${alias_tags[*]}" > $GITHUB_OUTPUT
-          source_image="quay.io/fedora-ostree-desktops/silverblue:${{ matrix.major_version }}"
-          [[ "${{ matrix.gpu }}" == "nvidia" ]] && source_image="ghcr.io/ublue-os/silverblue-nvidia:${{ matrix.major_version }}"
-          echo "source_image=$source_image" >> $GITHUB_OUTPUT
+
+          echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
+
 
       - name: Buildah Build
         id: image-build
         uses: redhat-actions/buildah-build@v2
         with:
           # The name (reference) of the image to build
-          image: ${{ env.IMAGE_NAME }}-${{ matrix.gpu }}
+          image: ${{ steps.tags-generate.outputs.image_name }}
           # The tags of the image to build. For multiple tags, seperate by whitespace. For example, "latest v1".
           tags: |
             ${{ steps.tags-generate.outputs.alias_tags }}
