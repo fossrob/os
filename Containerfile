@@ -27,6 +27,7 @@ RUN echo "configuration customisation" && \
 # This will only affect new installations...
 RUN echo "service configuration" && \
       systemctl enable tailscaled.service && \
+      systemctl enable nix.mount && \
     echo "done"
 
 RUN echo "clean up" $$ \
