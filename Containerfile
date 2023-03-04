@@ -1,4 +1,4 @@
-ARG SOURCE_IMAGE=quay.io/fedora-ostree-desktops/silverblue:37
+ARG SOURCE_IMAGE=ghcr.io/ublue-os/silverblue-main
 
 FROM $SOURCE_IMAGE
 
