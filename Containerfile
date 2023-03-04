@@ -2,7 +2,7 @@ ARG SOURCE_IMAGE=quay.io/fedora-ostree-desktops/silverblue:37
 
 FROM $SOURCE_IMAGE
 
-RUN rpm-ostree override remove firefox firefox-langpacks
+RUN rpm-ostree override remove firefox firefox-langpacks gnome-software gnome-software-rpm-ostree
 
 COPY etc /etc
 
