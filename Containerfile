@@ -13,6 +13,7 @@ RUN rpm-ostree install \
       just \
       lm_sensors \
       openssl \
+      nvtop \
       tailscale \
       vim \
       virt-manager \
