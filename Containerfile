@@ -18,6 +18,7 @@ RUN rpm-ostree install \
       lm_sensors \
       openssl \
       protonvpn \
+      python3-pip \
       nvtop \
       tailscale \
       vim \
