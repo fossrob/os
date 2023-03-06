@@ -12,6 +12,7 @@ COPY etc /etc
 
 RUN rpm-ostree install \
       distrobox \
+      gtk-murrine-engine gtk2-engines \
       gnome-shell-extension-appindicator gnome-tweaks \
       kitty kitty-bash-integration kitty-doc \
       lm_sensors \
