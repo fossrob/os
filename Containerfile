@@ -17,6 +17,7 @@ RUN rpm-ostree install \
       kitty kitty-bash-integration kitty-doc \
       lm_sensors \
       openssl \
+      protonvpn \
       nvtop \
       tailscale \
       vim \
