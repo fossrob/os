@@ -2,6 +2,20 @@ ARG SOURCE_IMAGE=ghcr.io/ublue-os/silverblue-main
 
 FROM $SOURCE_IMAGE
 
+RUN echo "rpm fusion updates..." && \
+      rpm-ostree refresh-md && \
+      rpm-ostree install \
+        ffmpeg \
+        gstreamer1-plugin-libav \
+        gstreamer1-plugins-bad-free-extras \
+        gstreamer1-plugins-bad-freeworld \
+        gstreamer1-plugins-ugly \
+        gstreamer1-vaapi \
+        mesa-va-drivers-freeworld \
+        mesa-vdpau-drivers-freeworld \
+       && \
+    echo "done"
+
 RUN rpm-ostree override remove \
       firefox firefox-langpacks \
       gnome-software gnome-software-rpm-ostree \
