@@ -10,6 +10,9 @@ RUN rpm-ostree override remove \
 
 COPY etc /etc
 
+COPY --from=ghcr.io/ublue-os/config:latest /files/ublue-os-udev-rules /
+COPY --from=ghcr.io/ublue-os/config:latest /files/ublue-os-update-services /
+
 RUN rpm-ostree install \
       distrobox \
       gtk-murrine-engine gtk2-engines \
