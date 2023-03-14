@@ -1,3 +1,2 @@
-build:
-  buildah build --format docker --tag os
-
+build *FLAGS:
+  buildah build --format docker --tag os {{FLAGS}}
