@@ -23,6 +23,7 @@ RUN rpm-ostree override remove \
     ;
 
 COPY etc /etc
+COPY scripts /scripts
 
 COPY --from=ghcr.io/ublue-os/config:latest /files/ublue-os-udev-rules /
 COPY --from=ghcr.io/ublue-os/config:latest /files/ublue-os-update-services /
@@ -40,13 +41,9 @@ RUN echo "installing packages..." && \
         tailscale \
         vim \
       && \
-      export $(grep '^VERSION_ID' /etc/os-release) && \
-      PROTON_REPO_STATUS=$( \
-        curl --silent --include --output /dev/null --write-out "%{http_code}" "https://repo.protonvpn.com/fedora-${VERSION_ID}-stable/" \
-      ) && \
-      [[ PROTON_REPO_STATUS -eq 200 ]] && rpm-ostree install protonvpn && \
     echo "done"
 
+RUN /scripts/protonvpn.sh
 
 # This will only affect new installations...
 RUN echo "configuration customisation" && \
@@ -62,7 +59,7 @@ RUN echo "service configuration" && \
 RUN echo "clean up" $$ \
       rm -f /etc/yum.repos.d/protonvpn-stable.repo && \
       rm -f /etc/yum.repos.d/tailscale.repo && \
-      rm -rf /tmp/* /var/* && \
+      rm -rf /scripts /tmp/* /var/* && \
     echo "done"
 
 RUN ostree container commit
