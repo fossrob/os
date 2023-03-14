@@ -27,19 +27,26 @@ COPY etc /etc
 COPY --from=ghcr.io/ublue-os/config:latest /files/ublue-os-udev-rules /
 COPY --from=ghcr.io/ublue-os/config:latest /files/ublue-os-update-services /
 
-RUN rpm-ostree install \
-      distrobox \
-      gtk-murrine-engine gtk2-engines \
-      gnome-tweaks \
-      kitty kitty-bash-integration kitty-doc \
-      lm_sensors \
-      openssl \
-      protonvpn \
-      python3-pip \
-      nvtop \
-      tailscale \
-      vim \
-    ;
+RUN echo "installing packages..." && \
+      rpm-ostree install \
+        distrobox \
+        gtk-murrine-engine gtk2-engines \
+        gnome-tweaks \
+        kitty kitty-bash-integration kitty-doc \
+        lm_sensors \
+        openssl \
+        python3-pip \
+        nvtop \
+        tailscale \
+        vim \
+      && \
+      export $(grep '^VERSION_ID' /etc/os-release) && \
+      PROTON_REPO_STATUS=$( \
+        curl --silent --include --output /dev/null --write-out "%{http_code}" "https://repo.protonvpn.com/fedora-${VERSION_ID}-stable/" \
+      ) && \
+      [[ PROTON_REPO_STATUS -eq 200 ]] && rpm-ostree install protonvpn && \
+    echo "done"
+
 
 # This will only affect new installations...
 RUN echo "configuration customisation" && \
@@ -53,6 +60,7 @@ RUN echo "service configuration" && \
     echo "done"
 
 RUN echo "clean up" $$ \
+      rm -f /etc/yum.repos.d/protonvpn-stable.repo && \
       rm -f /etc/yum.repos.d/tailscale.repo && \
       rm -rf /tmp/* /var/* && \
     echo "done"
