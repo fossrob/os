@@ -34,6 +34,7 @@ RUN echo "installing packages..." && \
         gtk-murrine-engine gtk2-engines \
         gnome-tweaks \
         kitty kitty-bash-integration kitty-doc \
+        kernel-tools \
         lm_sensors \
         openssl \
         python3-pip \
