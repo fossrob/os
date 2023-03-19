@@ -53,6 +53,7 @@ RUN echo "configuration customisation" && \
 
 # This will only affect new installations...
 RUN echo "service configuration" && \
+      systemctl enable cpupower.service && \
       systemctl enable nix.mount && \
       systemctl enable tailscaled.service && \
     echo "done"
