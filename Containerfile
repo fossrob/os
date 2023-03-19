@@ -47,11 +47,6 @@ RUN echo "installing packages..." && \
 RUN /scripts/protonvpn.sh
 
 # This will only affect new installations...
-RUN echo "configuration customisation" && \
-      sed -e 's/#AutomaticUpdatePolicy.*/AutomaticUpdatePolicy=stage/' -i /etc/rpm-ostreed.conf && \
-    echo "done"
-
-# This will only affect new installations...
 RUN echo "service configuration" && \
       systemctl enable cpupower.service && \
       systemctl enable nix.mount && \
