@@ -13,7 +13,7 @@ eval "$(grep '^VERSION_ID' /etc/os-release)"
 
 PROTON_REPO_STATUS=$(
     curl --silent --include --output /dev/null --write-out "%{http_code}" \
-      --url "https://repo.protonvpn.com/fedora-${VERSION_ID}-stable/"
+      --url "https://repo.protonvpn.com/fedora-${VERSION_ID}-stable/public_key.asc"
   )
 
 if [[ $PROTON_REPO_STATUS -eq 200 ]]; then
