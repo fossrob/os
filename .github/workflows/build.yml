@@ -48,7 +48,6 @@ jobs:
         run: |
           image_name="${{ env.IMAGE_NAME }}"
           source_image="ghcr.io/ublue-os/silverblue-main:${{ matrix.major_version }}"
-          source_image="quay.io/fedora-ostree-desktops/silverblue:${{ matrix.major_version }}"
 
           if [[ "${{ matrix.gpu }}" == "nvidia" ]]; then
             image_name="${{ env.IMAGE_NAME }}-nvidia"
