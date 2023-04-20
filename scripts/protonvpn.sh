@@ -18,5 +18,5 @@ PROTON_REPO_STATUS=$(
 
 if [[ $PROTON_REPO_STATUS -eq 200 ]]; then
   cat > /etc/yum.repos.d/protonvpn.repo <<< "$PROTON_REPO_DEFINITION"
-  rpm-ostree install protonvpn
+  rpm-ostree install protonvpn || true
 fi
