@@ -35,6 +35,7 @@ RUN echo "installing packages..." && \
         gnome-tweaks \
         kitty kitty-bash-integration kitty-doc \
         kernel-tools \
+        libgda libgda-sqlite \
         lm_sensors \
         openssl \
         python3-pip \
