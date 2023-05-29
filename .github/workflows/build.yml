@@ -102,6 +102,7 @@ jobs:
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
           oci: false
           extra-args: |
+            --cache-from=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ matrix.major_version }}
             --target=${{ matrix.base_name }}
 
       - name: Push To Registry
