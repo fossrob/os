@@ -1,12 +1,10 @@
-ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-silverblue}"
 ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
-ARG SOURCE_IMAGE="${SOURCE_IMAGE:-$BASE_IMAGE_NAME-$IMAGE_FLAVOR}"
-ARG BASE_IMAGE="ghcr.io/ublue-os/${SOURCE_IMAGE}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
+ARG MAJOR_VERSION="${MAJOR_VERSION:-38}"
+ARG UPSTREAM="ghcr.io/ublue-os/silverblue-${IMAGE_FLAVOR}:${MAJOR_VERSION}"
 
 
 ################################### os #########################################
-FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS os
+FROM ${UPSTREAM} AS os
 
 COPY etc /etc
 
