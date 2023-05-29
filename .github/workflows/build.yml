@@ -108,7 +108,7 @@ jobs:
           extra-args: |
             --cache-from=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ matrix.major_version }}
             --layers
-            --target=${{ env.IMAGE_NAME }}
+            --target=${{ matrix.base_name }}
 
       - name: Push To Registry
         id: registry-push
