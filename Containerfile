@@ -1,63 +1,73 @@
-ARG SOURCE_IMAGE=ghcr.io/ublue-os/silverblue-main
+ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-silverblue}"
+ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
+ARG SOURCE_IMAGE="${SOURCE_IMAGE:-$BASE_IMAGE_NAME-$IMAGE_FLAVOR}"
+ARG BASE_IMAGE="ghcr.io/ublue-os/${SOURCE_IMAGE}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 
-FROM $SOURCE_IMAGE
 
-#RUN echo "rpm fusion updates..." && \
-#      rpm-ostree refresh-md && \
-#      rpm-ostree install \
-#        ffmpeg \
-#        gstreamer1-plugin-libav \
-#        gstreamer1-plugins-bad-free-extras \
-#        gstreamer1-plugins-bad-freeworld \
-#        gstreamer1-plugins-ugly \
-#        gstreamer1-vaapi \
-#        mesa-va-drivers-freeworld \
-#        mesa-vdpau-drivers-freeworld \
-#       && \
-#    echo "done"
-
-RUN rpm-ostree override remove \
-      firefox firefox-langpacks \
-      gnome-software gnome-software-rpm-ostree \
-      gnome-disk-utility gnome-tour \
-    ;
+################################### os #########################################
+FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS os
 
 COPY etc /etc
-COPY scripts /scripts
 
-COPY --from=ghcr.io/ublue-os/config:latest /files/ublue-os-udev-rules /
-COPY --from=ghcr.io/ublue-os/config:latest /files/ublue-os-update-services /
+RUN echo "removing packages..." && \
+      rpm-ostree override remove \
+        firefox firefox-langpacks \
+        gnome-software gnome-software-rpm-ostree \
+        gnome-tour \
+      && \
+    echo "done"
 
 RUN echo "installing packages..." && \
       rpm-ostree install \
-        distrobox \
+        tailscale \
+      && \
+    echo "done"
+
+RUN echo "service configuration..." && \
+      systemctl enable tailscaled.service && \
+    echo "done"
+
+RUN echo "clean up & commit..." $$ \
+      rm -f /etc/yum.repos.d/tailscale.repo && \
+      rm -rf /scripts /tmp/* /var/* && \
+      ostree container commit && \
+    echo "done"
+
+RUN
+
+################################### os-ux ######################################
+FROM os AS os-ux
+
+
+RUN ostree container commit
+
+################################### os-dx ######################################
+FROM os AS os-dx
+
+COPY dx/etc /etc
+COPY scripts /scripts
+
+RUN echo "installing packages..." && \
+      rpm-ostree install \
         gtk-murrine-engine gtk2-engines \
-        gnome-tweaks \
         kitty kitty-bash-integration kitty-doc \
-        kernel-tools \
         libgda libgda-sqlite \
         lm_sensors \
         openssl \
         python3-pip \
-        nvtop \
-        tailscale \
-        vim \
       && \
     echo "done"
 
-RUN /scripts/protonvpn.sh
+RUN /scripts/protonvpn.sh || true
 
 # This will only affect new installations...
 RUN echo "service configuration" && \
       systemctl enable cpupower.service && \
       systemctl enable nix.mount && \
-      systemctl enable tailscaled.service && \
     echo "done"
 
-RUN echo "clean up" $$ \
-      rm -f /etc/yum.repos.d/protonvpn-stable.repo && \
-      rm -f /etc/yum.repos.d/tailscale.repo && \
+RUN echo "clean up & commit..." $$ \
       rm -rf /scripts /tmp/* /var/* && \
+      ostree container commit && \
     echo "done"
-
-RUN ostree container commit

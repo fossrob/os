@@ -1,90 +1,108 @@
-# This is a basic workflow to help you get started with Actions
 name: build-os
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - 'main'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
   schedule:
-    - cron: '30 5 * * *'  # 05h30 UTC
+    - cron: '20 23 * * *'  # 23h20 UTC
+  workflow_dispatch:  # allows you to run this workflow manually from the actions tab
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-env:
-  IMAGE_NAME: os
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     strategy:
       fail-fast: false
       matrix:
-        gpu: ['amd', 'nvidia']
+        image_flavor: [main, nvidia]
+        base_name: [os, os-ux, os-dx]
         major_version: [37, 38]
         include:
           - major_version: 37
-            is_latest: true
-            is_stable: true
+            is_latest_version: false
+            is_stable_version: false
           - major_version: 38
-            is_latest: true
-            is_stable: false
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+            is_latest_version: true
+            is_stable_version: true
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Generate Tags
-        id: tags-generate
-        shell: bash
+      - name: Matrix Variables
+        id: matrix-variables
         run: |
-          image_name="${{ env.IMAGE_NAME }}"
-          source_image="ghcr.io/ublue-os/silverblue-main:${{ matrix.major_version }}"
-
-          if [[ "${{ matrix.gpu }}" == "nvidia" ]]; then
-            image_name="${{ env.IMAGE_NAME }}-nvidia"
-            source_image="ghcr.io/ublue-os/silverblue-nvidia:${{ matrix.major_version }}"
+          if [[ "${{ matrix.image_flavor }}" == "main" ]]; then
+              echo "IMAGE_NAME=${{ matrix.base_name }}" >> $GITHUB_ENV
+          else
+              echo "IMAGE_NAME=${{ format('{0}-{1}', matrix.base_name, matrix.image_flavor) }}" >> $GITHUB_ENV
           fi
 
-          echo "image_name=$image_name" > $GITHUB_OUTPUT
-          echo "source_image=$source_image" >> $GITHUB_OUTPUT
+      - name: Generate Tags
+        id: generate-tags
+        run: |
+          # Generate a timestamp for creating an image version history
+          TIMESTAMP="$(date +%Y%m%d)"
+          MAJOR_VERSION="${{ matrix.major_version }}"
+          COMMIT_TAGS=()
+          BUILD_TAGS=()
+          # Have tags for tracking builds during pull request
+          SHA_SHORT="${GITHUB_SHA::7}"
+          COMMIT_TAGS+=("${SHA_SHORT}-${MAJOR_VERSION}")
+          if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
+             [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
+              COMMIT_TAGS+=("${SHA_SHORT}")
+          fi
 
-          alias_tags=()
+          BUILD_TAGS=("${MAJOR_VERSION}" "${MAJOR_VERSION}-${TIMESTAMP}")
 
-          alias_tags+=("${{ matrix.gpu }}")
-          alias_tags+=("${{ matrix.major_version }}")
+          if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
+             [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
+              BUILD_TAGS+=("latest")
+          fi
 
-          [[ "${{ matrix.is_latest }}" == "true" ]] && alias_tags+=("latest")
-          [[ "${{ matrix.is_stable }}" == "true" ]] && alias_tags+=("stable")
-
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              echo "Generated the following commit tags: "
+              for TAG in "${COMMIT_TAGS[@]}"; do
+                  echo "${TAG}"
+              done
+              alias_tags=("${COMMIT_TAGS[@]}")
+          else
+              alias_tags=("${BUILD_TAGS[@]}")
+          fi
+          echo "Generated the following build tags: "
+          for TAG in "${BUILD_TAGS[@]}"; do
+              echo "${TAG}"
+          done
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
+      - name: Fedora Version
+        id: labels
+        run: |
+          ver=$(skopeo inspect docker://ghcr.io/ublue-os/silverblue-${{ matrix.image_flavor }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
+          echo "VERSION=$ver" >> $GITHUB_OUTPUT
 
-      - name: Buildah Build
+      - name: Image Build
         id: image-build
         uses: redhat-actions/buildah-build@v2
         with:
-          # The name (reference) of the image to build
-          image: ${{ steps.tags-generate.outputs.image_name }}
-          # The tags of the image to build. For multiple tags, seperate by whitespace. For example, "latest v1".
+          containerfiles: |
+            ./Containerfile
+          image: ${{ env.IMAGE_NAME }}
           tags: |
-            ${{ steps.tags-generate.outputs.alias_tags }}
-          # # The labels of the image to build. Seperate by newline. For example, "io.containers.capabilities=sys_admin,mknod".
-          # labels: # optional
-          # List of Containerfile paths (eg: ./Containerfile)
-          containerfiles: ./Containerfile
-          # List of --build-args to pass to buildah
-          build-args: SOURCE_IMAGE=${{ steps.tags-generate.outputs.source_image }}
-          # Set to true to build using the OCI image format instead of the Docker image format
+            ${{ steps.generate-tags.outputs.alias_tags }}
+          build-args: |
+            IMAGE_NAME=${{ env.IMAGE_NAME }}
+            IMAGE_FLAVOR=${{ matrix.image_flavor }}
+            FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
           oci: false
+          extra-args: |
+            --target=${{ matrix.base_name }}
 
       - name: Push To Registry
         id: registry-push
