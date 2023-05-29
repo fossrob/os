@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         image_flavor: [main, nvidia]
-        base_name: [os, os-ux, os-dx]
+        base_name: [os, os-dx]
         major_version: [37, 38]
         include:
           - major_version: 37

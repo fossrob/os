@@ -34,8 +34,6 @@ RUN echo "clean up & commit..." $$ \
       ostree container commit && \
     echo "done"
 
-RUN
-
 ################################### os-ux ######################################
 FROM os AS os-ux
 
@@ -61,7 +59,6 @@ RUN echo "installing packages..." && \
 
 RUN /scripts/protonvpn.sh || true
 
-# This will only affect new installations...
 RUN echo "service configuration" && \
       systemctl enable cpupower.service && \
       systemctl enable nix.mount && \
