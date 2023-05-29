@@ -90,8 +90,7 @@ jobs:
       - name: Cache Creation
         id: cache-creation
         run: |
-          buildah pull ghcr.io/${{ github.repository_owner }}/${{ matrix.base_name }}:${{ matrix.major_version }}
-          buildah pull ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ matrix.major_version }}
+          buildah pull --quiet ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ matrix.major_version }}
 
       - name: Image Build
         id: image-build
