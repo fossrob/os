@@ -87,6 +87,12 @@ jobs:
           ver=$(skopeo inspect docker://ghcr.io/ublue-os/silverblue-${{ matrix.image_flavor }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
           echo "VERSION=$ver" >> $GITHUB_OUTPUT
 
+      - name: Cache Creation
+        id: cache-creation
+        run: |
+          buildah pull ghcr.io/${{ github.repository_owner }}/${{ matrix.base_name }}:${{ matrix.major_version }}
+          buildah pull ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ matrix.major_version }}
+
       - name: Image Build
         id: image-build
         uses: redhat-actions/buildah-build@v2
@@ -103,7 +109,7 @@ jobs:
           extra-args: |
             --cache-from=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ matrix.major_version }}
             --layers
-            --target=${{ matrix.base_name }}
+            --target=${{ env.IMAGE_NAME }}
 
       - name: Push To Registry
         id: registry-push
