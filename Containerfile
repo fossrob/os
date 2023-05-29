@@ -11,6 +11,7 @@ COPY etc /etc
 RUN echo "removing packages..." && \
       rpm-ostree override remove \
         firefox firefox-langpacks \
+        htop nvtop \
         gnome-software gnome-software-rpm-ostree \
         gnome-tour \
       && \
@@ -35,6 +36,10 @@ RUN echo "clean up & commit..." $$ \
 ################################### os-ux ######################################
 FROM os AS os-ux
 
+# Dash to panel
+# Browser
+# Desktop icons
+# X11
 
 RUN ostree container commit
 
@@ -51,6 +56,7 @@ RUN echo "installing packages..." && \
         libgda libgda-sqlite \
         lm_sensors \
         openssl \
+        htop nvtop \
         python3-pip \
       && \
     echo "done"
