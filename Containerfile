@@ -19,6 +19,7 @@ RUN echo "removing packages..." && \
 
 RUN echo "installing packages..." && \
       rpm-ostree install \
+        lm_sensors \
         tailscale \
       && \
     echo "done"
@@ -54,7 +55,6 @@ RUN echo "installing packages..." && \
         gtk-murrine-engine gtk2-engines \
         kitty kitty-bash-integration kitty-doc \
         libgda libgda-sqlite \
-        lm_sensors \
         openssl \
         htop nvtop \
         python3-pip \
