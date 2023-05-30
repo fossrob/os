@@ -1,0 +1,30 @@
+default:
+    @just --list
+
+bios:
+  systemctl reboot --firmware-setup
+
+changelogs:
+  rpm-ostree db diff --changelogs
+
+flatpak-clean:
+  sudo /usr/lib/fedora-third-party/fedora-third-party-opt-out
+  sudo /usr/bin/fedora-third-party disable
+  sudo flatpak remote-delete fedora --force
+  sudo flatpak remove --system --noninteractive --all
+  flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
+
+flatpak-install:
+  flatpak --user install org.gnome.Calculator org.gnome.NautilusPreviewer org.gnome.TextEditor org.gnome.clocks org.gnome.eog
+  flatpak --user install com.bitwarden.desktop com.dropbox.Client com.google.Chrome com.obsproject.Studio it.mijorus.smile org.flameshot.Flameshot org.mozilla.firefox org.videolan.VLC
+  flatpak --user install org.libreoffice.LibreOffice org.gnome.Evince com.mattjakeman.ExtensionManager com.github.tchx84.Flatseal
+
+touch:
+  pip install --upgrade gnome-extensions-cli
+  gext install improvedosk@nick-shmyrev.dev
+  gext install gestureImprovements@gestures
+
+update:
+  rpm-ostree update
+  flatpak update -y
+
