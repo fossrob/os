@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2016
 
 PROTON_REPO_DEFINITION='
 [protonvpn-fedora-stable]

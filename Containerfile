@@ -1,74 +1,60 @@
-ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
-ARG MAJOR_VERSION="${MAJOR_VERSION:-38}"
-ARG UPSTREAM="ghcr.io/ublue-os/silverblue-${IMAGE_FLAVOR}:${MAJOR_VERSION}"
-
+ARG FEDORA_VERSION="${FEDORA_VERSION:-38}"
+ARG UPSTREAM="${UPSTREAM:-quay.io/fedora-ostree-desktops/silverblue}"
 
 ################################### os #########################################
-FROM ${UPSTREAM} AS os
+FROM ${UPSTREAM}:${FEDORA_VERSION} AS os
+
+ARG IMAGE_NAME="os"
+ARG FEDORA_VERSION="${FEDORA_VERSION}"
 
 COPY etc /etc
 
-RUN echo "removing packages..." && \
-      rpm-ostree override remove \
-        firefox firefox-langpacks \
-        htop nvtop \
-        gnome-software gnome-software-rpm-ostree \
-        gnome-tour \
-      && \
-    echo "done"
+ADD scripts/* /tmp/
+ADD packages.json /tmp/
 
-RUN echo "installing packages..." && \
-      rpm-ostree install \
-        lm_sensors \
-        tailscale \
-      && \
-    echo "done"
+COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
 
-RUN echo "service configuration..." && \
-      systemctl enable tailscaled.service && \
-    echo "done"
+ADD https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VERSION}.noarch.rpm /tmp/rpms/
+ADD https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${FEDORA_VERSION}.noarch.rpm /tmp/rpms/
 
-RUN echo "clean up & commit..." $$ \
-      rm -f /etc/yum.repos.d/tailscale.repo && \
-      rm -rf /scripts /tmp/* /var/* && \
-      ostree container commit && \
-    echo "done"
+RUN /tmp/build.sh
+RUN /tmp/tailscale.sh
+RUN rm -rf /tmp/* /var/*
+RUN ostree container commit
+RUN mkdir -p /var/tmp && chmod -R 1777 /var/tmp
 
 ################################### os-ux ######################################
 FROM os AS os-ux
 
-# Dash to panel
-# Browser
-# Desktop icons
-# X11
+ARG IMAGE_NAME="os-ux"
+ARG FEDORA_VERSION="${FEDORA_VERSION}"
 
+ADD scripts/* /tmp/
+ADD packages.json /tmp/packages.json
+
+RUN /tmp/build.sh
+RUN rm -rf /tmp/* /var/*
 RUN ostree container commit
+RUN mkdir -p /var/tmp && chmod -R 1777 /var/tmp
 
 ################################### os-dx ######################################
 FROM os AS os-dx
 
-COPY dx/etc /etc
+ARG IMAGE_NAME="os-dx"
+ARG FEDORA_VERSION="${FEDORA_VERSION}"
+
+# COPY dx/etc /etc
 COPY scripts /scripts
 
-RUN echo "installing packages..." && \
-      rpm-ostree install \
-        gtk-murrine-engine gtk2-engines \
-        kitty kitty-bash-integration kitty-doc \
-        libgda libgda-sqlite \
-        openssl \
-        htop nvtop \
-        python3-pip \
-      && \
-    echo "done"
+ADD scripts/* /tmp/
+ADD packages.json /tmp/packages.json
 
-RUN /scripts/protonvpn.sh || true
+RUN /tmp/build.sh
+RUN rm -rf /tmp/* /var/*
+RUN ostree container commit
+RUN mkdir -p /var/tmp && chmod -R 1777 /var/tmp
 
-RUN echo "service configuration" && \
-      systemctl enable cpupower.service && \
-      systemctl enable nix.mount && \
-    echo "done"
-
-RUN echo "clean up & commit..." $$ \
-      rm -rf /scripts /tmp/* /var/* && \
-      ostree container commit && \
-    echo "done"
+# RUN echo "service configuration" && \
+#       systemctl enable cpupower.service && \
+#       systemctl enable nix.mount && \
+#     echo "done"
