@@ -1,8 +1,8 @@
-image := "os"
+image:="os"
 
-build *FLAGS:
-  buildah build --format docker --tls-verify=true --tag {{ image }} --target {{ image }} {{FLAGS}}
-  just run bash
+build image=image:
+  buildah build --format docker --tls-verify=true --tag {{image}} --target {{image}}
+  just run {{image}} bash
 
-run *FLAGS:
-  podman run --rm --interactive --tty localhost/{{ image }} {{ FLAGS }}
+run image *FLAGS:
+  podman run --rm --interactive --tty localhost/{{image}} {{FLAGS}}

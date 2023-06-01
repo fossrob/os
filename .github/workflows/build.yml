@@ -14,7 +14,6 @@ on:
 env:
     IMAGE_NAME: os
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-    UPSTREAM: quay.io/fedora-ostree-desktops/silverblue
 
 jobs:
   build:
@@ -26,25 +25,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # image_name: [os, os-ux, os-dx]
-        # image_flavor: [main, nvidia]
-        # fedora_version: [37, 38]
-        include:
-          - image_name: os-ux
-            image_flavor: main
-            fedora_version: 38
-            is_latest_version: true
-            is_stable_version: true
-          - image_name: os-dx
-            image_flavor: nvidia
-            fedora_version: 38
-            is_latest_version: true
-            is_stable_version: true
-          - image_name: os-dx
-            image_flavor: nvidia
-            fedora_version: 37
-            is_latest_version: false
-            is_stable_version: false
+        base_name: [os, os-dx]
+        image_flavor: [main, nvidia]
+        fedora_version: [37, 38]
 
     steps:
       - uses: actions/checkout@v3
@@ -53,10 +36,9 @@ jobs:
         id: matrix-variables
         run: |
           if [[ "${{ matrix.image_flavor }}" == "main" ]]; then
-              echo "IMAGE_NAME=${{ matrix.image_name }}" >> $GITHUB_ENV
+              echo "IMAGE_NAME=${{ matrix.base_name }}" >> $GITHUB_ENV
           else
-              echo "IMAGE_NAME=${{ format('{0}-{1}', matrix.image_name, matrix.image_flavor) }}" >> $GITHUB_ENV
-              echo "UPSTREAM=ghcr.io/ublue-os/silverblue-nvidia" >> $GITHUB_ENV
+              echo "IMAGE_NAME=${{ format('{0}-{1}', matrix.base_name, matrix.image_flavor) }}" >> $GITHUB_ENV
           fi
 
       - name: Generate Tags
@@ -67,10 +49,6 @@ jobs:
           TIMESTAMP="$(date +%Y%m%d)"
 
           BUILD_TAGS=("${FEDORA_VERSION}" "${FEDORA_VERSION}-${TIMESTAMP}")
-
-          if [[ "${{ matrix.is_latest_version }}" == "true" ]] && [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
-            BUILD_TAGS+=("latest")
-          fi
 
           echo "Generated the following build tags: "
           for TAG in "${BUILD_TAGS[@]}"; do
@@ -84,16 +62,18 @@ jobs:
         id: image-build
         uses: redhat-actions/buildah-build@v2
         with:
-          containerfiles: Containerfile
+          containerfiles: |
+            ./Containerfile
           image: ${{ env.IMAGE_NAME }}
-          tags: ${{ steps.generate-tags.outputs.alias_tags }}
-          # IMAGE_NAME=${{ matrix.image_name }}
-          # IMAGE_FLAVOR=${{ matrix.image_flavor }}
+          tags: |
+            ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
-            FEDORA_VERSION=${{ matrix.fedora_version }}
-            UPSTREAM=${{ env.UPSTREAM }}
+            IMAGE_NAME=${{ env.IMAGE_NAME }}
+            IMAGE_FLAVOR=${{ matrix.image_flavor }}
+            FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
           oci: false
-          extra-args: --target=${{ matrix.image_name }}
+          extra-args: |
+            --target=${{ matrix.base_name }}
 
       - name: Push To Registry
         id: registry-push

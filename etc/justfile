@@ -27,4 +27,3 @@ touch:
 update:
   rpm-ostree update
   flatpak update -y
-

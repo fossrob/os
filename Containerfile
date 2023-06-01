@@ -1,60 +1,73 @@
-ARG FEDORA_VERSION="${FEDORA_VERSION:-38}"
-ARG UPSTREAM="${UPSTREAM:-quay.io/fedora-ostree-desktops/silverblue}"
+ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
+ARG BASE_IMAGE="ghcr.io/ublue-os/silverblue-${IMAGE_FLAVOR}"
 
 ################################### os #########################################
-FROM ${UPSTREAM}:${FEDORA_VERSION} AS os
+FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS os
 
-ARG IMAGE_NAME="os"
-ARG FEDORA_VERSION="${FEDORA_VERSION}"
+ARG IMAGE_NAME="${IMAGE_NAME}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
 
 COPY etc /etc
 
-ADD scripts/* /tmp/
-ADD packages.json /tmp/
+RUN sed -i /etc/yum.repos.d/rpmfusion-free-updates.repo -e 's/^metalink/#metalink/' -e 's/^#baseurl/baseurl/'
+RUN sed -i /etc/yum.repos.d/rpmfusion-nonfree-updates.repo -e 's/^metalink/#metalink/' -e 's/^#baseurl/baseurl/'
+RUN for repo in $(ls /etc/yum.repos.d/*.repo); do sed -i $repo -e 's/enabled=1/enabled=0/'; done
 
-COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
+RUN echo "Customising packages..." && \
+      rpm-ostree override remove \
+        firefox firefox-langpacks \
+        fzf \
+        gnome-initial-setup \
+        gnome-software gnome-software-rpm-ostree \
+        gnome-tour \
+        htop \
+        nvtop \
+      && \
+      rpm-ostree install --idempotent --enablerepo fedora,updates,tailscale-stable \
+        gnome-shell-extension-appindicator \
+        gnome-shell-extension-blur-my-shell \
+        gnome-shell-extension-caffeine \
+        gnome-shell-extension-dash-to-dock \
+        gnome-shell-extension-dash-to-panel \
+        gnome-shell-extension-just-perfection \
+        kitty-terminfo \
+        powertop \
+        tailscale \
+        yaru-theme \
+      && \
+      systemctl enable tailscaled.service && \
+    echo "...done!"
 
-ADD https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VERSION}.noarch.rpm /tmp/rpms/
-ADD https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${FEDORA_VERSION}.noarch.rpm /tmp/rpms/
-
-RUN /tmp/build.sh
-RUN /tmp/tailscale.sh
-RUN rm -rf /tmp/* /var/*
-RUN ostree container commit
-RUN mkdir -p /var/tmp && chmod -R 1777 /var/tmp
-
-################################### os-ux ######################################
-FROM os AS os-ux
-
-ARG IMAGE_NAME="os-ux"
-ARG FEDORA_VERSION="${FEDORA_VERSION}"
-
-ADD scripts/* /tmp/
-ADD packages.json /tmp/packages.json
-
-RUN /tmp/build.sh
-RUN rm -rf /tmp/* /var/*
-RUN ostree container commit
-RUN mkdir -p /var/tmp && chmod -R 1777 /var/tmp
+RUN echo "Clean up and commit..." && \
+      rm -f /etc/yum.repos.d/tailscale.repo && \
+      rm -rf /tmp/* /var/* && \
+      ostree container commit && \
+      mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
+    echo "...done!"
 
 ################################### os-dx ######################################
 FROM os AS os-dx
 
-ARG IMAGE_NAME="os-dx"
-ARG FEDORA_VERSION="${FEDORA_VERSION}"
+ARG IMAGE_NAME="${IMAGE_NAME}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
 
-# COPY dx/etc /etc
-COPY scripts /scripts
+COPY dx/etc /etc
 
-ADD scripts/* /tmp/
-ADD packages.json /tmp/packages.json
+RUN echo "Customising packages..." && \
+      rpm-ostree install --idempotent --enablerepo fedora,updates \
+        kitty \
+        libgda libgda-sqlite \
+        nvtop \
+        podman-compose \
+        python3-pip \
+      && \
+      systemctl enable cpupower.service && \
+      systemctl enable nix.mount && \
+    echo "...done!"
 
-RUN /tmp/build.sh
-RUN rm -rf /tmp/* /var/*
-RUN ostree container commit
-RUN mkdir -p /var/tmp && chmod -R 1777 /var/tmp
-
-# RUN echo "service configuration" && \
-#       systemctl enable cpupower.service && \
-#       systemctl enable nix.mount && \
-#     echo "done"
+RUN echo "Clean up and commit..." && \
+      rm -rf /tmp/* /var/* && \
+      ostree container commit && \
+      mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
+    echo "...done!"
