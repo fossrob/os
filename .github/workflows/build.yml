@@ -25,9 +25,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        base_name: [os, os-dx]
-        image_flavor: [main, nvidia]
-        fedora_version: [37, 38]
+        base: [os, os-dx]
+        flavor: [main, nvidia]
+        version: [37, 38]
+        exclude:
+          - base: os
+            flavor: nvidia
+          - base: os
+            flavor: main
+            version: 37
 
     steps:
       - uses: actions/checkout@v3
@@ -35,20 +41,19 @@ jobs:
       - name: Matrix Variables
         id: matrix-variables
         run: |
-          if [[ "${{ matrix.image_flavor }}" == "main" ]]; then
-              echo "IMAGE_NAME=${{ matrix.base_name }}" >> $GITHUB_ENV
+          if [[ "${{ matrix.flavor }}" == "main" ]]; then
+              echo "IMAGE_NAME=${{ matrix.base }}" >> $GITHUB_ENV
           else
-              echo "IMAGE_NAME=${{ format('{0}-{1}', matrix.base_name, matrix.image_flavor) }}" >> $GITHUB_ENV
+              echo "IMAGE_NAME=${{ format('{0}-{1}', matrix.base, matrix.flavor) }}" >> $GITHUB_ENV
           fi
 
       - name: Generate Tags
         id: generate-tags
         run: |
           BUILD_TAGS=()
-          FEDORA_VERSION="${{ matrix.fedora_version }}"
           TIMESTAMP="$(date +%Y%m%d)"
 
-          BUILD_TAGS=("${FEDORA_VERSION}" "${FEDORA_VERSION}-${TIMESTAMP}")
+          BUILD_TAGS=("${{ matrix.version }}" "${{ matrix.version }}-${TIMESTAMP}")
 
           echo "Generated the following build tags: "
           for TAG in "${BUILD_TAGS[@]}"; do
@@ -69,11 +74,11 @@ jobs:
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
             IMAGE_NAME=${{ env.IMAGE_NAME }}
-            IMAGE_FLAVOR=${{ matrix.image_flavor }}
-            FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
+            IMAGE_FLAVOR=${{ matrix.flavor }}
+            FEDORA_MAJOR_VERSION=${{ matrix.version }}
           oci: false
           extra-args: |
-            --target=${{ matrix.base_name }}
+            --target=${{ matrix.base }}
 
       - name: Push To Registry
         id: registry-push
