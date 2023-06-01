@@ -5,13 +5,8 @@ ARG BASE_IMAGE="ghcr.io/ublue-os/silverblue-${IMAGE_FLAVOR}"
 ################################### os #########################################
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS os
 
-ARG IMAGE_NAME="${IMAGE_NAME}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
-
 COPY etc /etc
 
-RUN sed -i /etc/yum.repos.d/rpmfusion-free-updates.repo -e 's/^metalink/#metalink/' -e 's/^#baseurl/baseurl/'
-RUN sed -i /etc/yum.repos.d/rpmfusion-nonfree-updates.repo -e 's/^metalink/#metalink/' -e 's/^#baseurl/baseurl/'
 RUN for repo in $(ls /etc/yum.repos.d/*.repo); do sed -i $repo -e 's/enabled=1/enabled=0/'; done
 
 RUN echo "Customising packages..." && \
@@ -48,9 +43,6 @@ RUN echo "Clean up and commit..." && \
 
 ################################### os-dx ######################################
 FROM os AS os-dx
-
-ARG IMAGE_NAME="${IMAGE_NAME}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
 
 COPY dx/etc /etc
 
