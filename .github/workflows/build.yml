@@ -8,7 +8,7 @@ on:
       - '**.md'
       - '**.txt'
   schedule:
-    - cron: '20 23 * * *'  # 23h20 UTC
+    - cron: '09 00 * * *'  # 09h00 UTC (+1h after ublue-os main and nvidia)
   workflow_dispatch:  # allows you to run this workflow manually from the actions tab
 
 env:
