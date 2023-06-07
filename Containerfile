@@ -54,6 +54,16 @@ RUN echo "Customising packages..." && \
         podman-compose \
         python3-pip \
       && \
+      rpm-ostree install --idempotent --enablerepo fedora,updates \
+        edk2-tools \
+        genisoimage \
+        lsb \
+        procps \
+        qemu \
+        spice-gtk-tools \
+        swtpm \
+        xrandr \
+      && \
       systemctl enable cpupower.service && \
       systemctl enable nix.mount && \
     echo "...done!"
