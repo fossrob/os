@@ -60,6 +60,7 @@ RUN echo "Customising packages..." && \
         lsb \
         procps \
         qemu \
+        socat \
         spice-gtk-tools \
         swtpm \
         xrandr \
