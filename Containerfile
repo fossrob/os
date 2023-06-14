@@ -19,7 +19,7 @@ RUN echo "Customising packages..." && \
         htop \
         nvtop \
       && \
-      rpm-ostree install --idempotent --enablerepo fedora,updates,tailscale-stable \
+      rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive,tailscale-stable \
         gnome-shell-extension-appindicator \
         gnome-shell-extension-blur-my-shell \
         gnome-shell-extension-caffeine \
@@ -47,14 +47,14 @@ FROM os AS os-dx
 COPY dx/etc /etc
 
 RUN echo "Customising packages..." && \
-      rpm-ostree install --idempotent --enablerepo fedora,updates \
+      rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive \
         kitty \
         libgda libgda-sqlite \
         nvtop \
         podman-compose \
         python3-pip \
       && \
-      rpm-ostree install --idempotent --enablerepo fedora,updates \
+      rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive \
         edk2-tools \
         genisoimage \
         lsb \
