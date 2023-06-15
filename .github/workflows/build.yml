@@ -27,13 +27,10 @@ jobs:
       matrix:
         base: [os, os-dx]
         flavor: [main, nvidia]
-        version: [37, 38]
+        version: [38]
         exclude:
           - base: os
             flavor: nvidia
-          - base: os
-            flavor: main
-            version: 37
 
     steps:
       - uses: actions/checkout@v3
