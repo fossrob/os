@@ -11,6 +11,7 @@ RUN for repo in $(ls /etc/yum.repos.d/*.repo); do sed -i $repo -e 's/enabled=1/e
 
 RUN echo "Customising packages..." && \
       rpm-ostree override remove \
+        distrobox \
         firefox firefox-langpacks \
         fzf \
         gnome-initial-setup \
