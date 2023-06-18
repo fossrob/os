@@ -6,6 +6,7 @@ ARG BASE_IMAGE="ghcr.io/ublue-os/silverblue-${IMAGE_FLAVOR}"
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS os
 
 COPY etc /etc
+COPY usr /usr
 
 RUN for repo in $(ls /etc/yum.repos.d/*.repo); do sed -i $repo -e 's/enabled=1/enabled=0/'; done
 
