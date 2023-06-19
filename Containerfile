@@ -39,6 +39,14 @@ RUN echo "Customising packages..." && \
       systemctl enable tailscaled.service && \
     echo "...done!"
 
+RUN echo "Installing Inter font..." && \
+      curl -sL $(curl -s https://api.github.com/repos/rsms/inter/releases | jq -r '.[0].assets[0].browser_download_url') -o /tmp/inter.zip && \
+      mkdir -p /tmp/inter /usr/share/fonts/inter && \
+      unzip /tmp/inter.zip -d /tmp/inter/ && \
+      mv /tmp/inter/*.ttf /tmp/inter/*.ttc /tmp/inter/LICENSE.txt /usr/share/fonts/inter/ && \
+      fc-cache -f /usr/share/fonts/inter && \
+    echo "...done!"
+
 RUN echo "Clean up and commit..." && \
       rm -f /etc/yum.repos.d/tailscale.repo && \
       rm -rf /tmp/* /var/* && \
