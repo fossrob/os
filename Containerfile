@@ -32,6 +32,9 @@ RUN echo "Customising packages..." && \
         powertop \
         tailscale \
         yaru-theme \
+        ddccontrol ddccontrol-gtk \
+        cockpit-bridge \
+        hplip hplip-gui \
       && \
       systemctl enable tailscaled.service && \
     echo "...done!"
@@ -50,6 +53,8 @@ COPY dx/etc /etc
 
 RUN echo "Customising packages..." && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive \
+        cockpit cockpit-system cockpit-networkmanager cockpit-selinux cockpit-storaged cockpit-podman cockpit-machines cockpit-pcp \
+        input-remapper \
         kitty \
         libgda libgda-sqlite \
         nvtop \
@@ -68,6 +73,7 @@ RUN echo "Customising packages..." && \
         xrandr \
       && \
       systemctl enable cpupower.service && \
+      systemctl enable input-remapper.service && \
       systemctl enable nix.mount && \
     echo "...done!"
 
