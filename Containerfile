@@ -64,12 +64,15 @@ COPY dx/etc /etc
 RUN echo "Customising packages..." && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive \
         cockpit cockpit-system cockpit-networkmanager cockpit-selinux cockpit-storaged cockpit-podman cockpit-machines cockpit-pcp \
+        fd-find \
         input-remapper \
         kitty \
         libgda libgda-sqlite \
         nvtop \
         podman-compose \
         python3-pip \
+        ripgrep \
+        the_silver_searcher \
       && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive \
         edk2-tools \
