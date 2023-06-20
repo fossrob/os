@@ -16,12 +16,14 @@ RUN echo "Customising packages..." && \
         firefox firefox-langpacks \
         fzf \
         gnome-initial-setup \
+        gnome-disk-utility \
         gnome-software gnome-software-rpm-ostree \
         gnome-tour \
         htop \
         nvtop \
       && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive,tailscale-stable \
+        baobab \
         gnome-shell-extension-appindicator \
         gnome-shell-extension-blur-my-shell \
         gnome-shell-extension-caffeine \
