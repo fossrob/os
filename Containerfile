@@ -69,6 +69,7 @@ RUN echo "Customising packages..." && \
         input-remapper \
         kitty \
         libgda libgda-sqlite \
+        lm_sensors \
         nvtop \
         podman-compose \
         python3-pip \
