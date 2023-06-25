@@ -16,6 +16,7 @@ RUN echo "Customising packages..." && \
         firefox firefox-langpacks \
         fzf \
         gnome-initial-setup \
+        gnome-classic-session \
         gnome-disk-utility \
         gnome-software gnome-software-rpm-ostree \
         gnome-tour \
