@@ -74,6 +74,7 @@ RUN echo "Customising packages..." && \
         podman-compose \
         python3-pip \
         ripgrep \
+        subscription-manager \
         the_silver_searcher \
       && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive \
