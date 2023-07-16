@@ -29,9 +29,6 @@ jobs:
           - base: os
             flavor: nvidia
 
-    env:
-      IMAGE_NAME: os
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -46,14 +43,14 @@ jobs:
       - name: Generate variables
         id: variables
         run: |
+          echo "datestamp=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
           if [[ "${{ matrix.flavor }}" == "main" ]]; then
               echo "image-name=${{ matrix.base }}" >> $GITHUB_OUTPUT
           else
               echo "image-name=${{ format('{0}-{1}', matrix.base, matrix.flavor) }}" >> $GITHUB_OUTPUT
           fi
-          echo "datestamp=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
 
-      - name: Build Image
+      - name: Build image
         id: image
         uses: redhat-actions/buildah-build@v2
         with:
@@ -62,15 +59,13 @@ jobs:
           image: ${{ steps.variables.outputs.image-name }}
           tags: ${{ matrix.version }} ${{ matrix.version }}-${{ steps.variables.outputs.datestamp }}
           build-args: |
-            IMAGE_NAME=${{ steps.variables.outputs.image-name }}
             IMAGE_FLAVOR=${{ matrix.flavor }}
             FEDORA_MAJOR_VERSION=${{ matrix.version }}
           oci: false
           extra-args: |
             --target=${{ matrix.base }}
 
-      - name: Push To Registry
-        id: registry-push
+      - name: Push to registry
         uses: redhat-actions/push-to-registry@v2
         with:
           registry: ghcr.io/${{ github.repository_owner }}
