@@ -52,18 +52,19 @@ jobs:
               echo "image-name=${{ format('{0}-{1}', matrix.base, matrix.flavor) }}" >> $GITHUB_OUTPUT
           fi
           if [[ ${{ matrix.version }} -eq 38 ]]; then
+            echo "containerfile=Containerfile" >> $GITHUB_OUTPUT
             echo "source-image=ghcr.io/ublue-os/silverblue-${{ matrix.flavor }}:${{ matrix.version }}" >> $GITHUB_OUTPUT
           else
+            echo "containerfile=Containerfile.39" >> $GITHUB_OUTPUT
             echo "source-image=quay.io/fedora/fedora-silverblue:${{ matrix.version }}" >> $GITHUB_OUTPUT
           fi
-
 
       - name: Build image
         id: image
         uses: redhat-actions/buildah-build@v2
         with:
           containerfiles: |
-            Containerfile
+            ${{ steps.variables.outputs.containerfile }}
           image: ${{ steps.variables.outputs.image-name }}
           tags: ${{ matrix.version }} ${{ matrix.version }}-${{ steps.variables.outputs.datestamp }}
           build-args: |
