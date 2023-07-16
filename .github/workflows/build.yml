@@ -11,9 +11,6 @@ on:
     - cron: '09 00 * * *'  # 09h00 UTC (+1h after ublue-os main and nvidia)
   workflow_dispatch:  # allows you to run this workflow manually from the actions tab
 
-env:
-    IMAGE_NAME: os
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,6 +29,9 @@ jobs:
           - base: os
             flavor: nvidia
 
+    env:
+      IMAGE_NAME: os
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -44,7 +44,6 @@ jobs:
           registry: ghcr.io/${{ github.repository_owner }}
 
       - name: Matrix Variables
-        id: matrix-variables
         run: |
           if [[ "${{ matrix.flavor }}" == "main" ]]; then
               echo "IMAGE_NAME=${{ matrix.base }}" >> $GITHUB_ENV
@@ -52,31 +51,19 @@ jobs:
               echo "IMAGE_NAME=${{ format('{0}-{1}', matrix.base, matrix.flavor) }}" >> $GITHUB_ENV
           fi
 
-      - name: Generate Tags
-        id: generate-tags
+      - name: Generate Datestamp
+        id: datestamp-generate
         run: |
-          BUILD_TAGS=()
-          TIMESTAMP="$(date +%Y%m%d)"
+          echo "datestamp=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
 
-          BUILD_TAGS=("${{ matrix.version }}" "${{ matrix.version }}-${TIMESTAMP}")
-
-          echo "Generated the following build tags: "
-          for TAG in "${BUILD_TAGS[@]}"; do
-            echo "${TAG}"
-          done
-
-          alias_tags=("${BUILD_TAGS[@]}")
-          echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
-
-      - name: Image Build
+      - name: Build Image
         id: image-build
         uses: redhat-actions/buildah-build@v2
         with:
           containerfiles: |
             ./Containerfile
           image: ${{ env.IMAGE_NAME }}
-          tags: |
-            ${{ steps.generate-tags.outputs.alias_tags }}
+          tags: ${{ matrix.version }} ${{ matrix.version }}-${{ steps.datestamp-generate.outputs.datestamp }}
           build-args: |
             IMAGE_NAME=${{ env.IMAGE_NAME }}
             IMAGE_FLAVOR=${{ matrix.flavor }}
