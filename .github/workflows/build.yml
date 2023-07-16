@@ -88,21 +88,9 @@ jobs:
       - name: Push To Registry
         id: registry-push
         uses: redhat-actions/push-to-registry@v2
-        env:
-          REGISTRY_URL: ghcr.io/${{ github.repository_owner }}
-          REGISTRY_USER: ${{ github.actor }}
-          REGISTRY_PASSWORD: ${{ github.token }}
         with:
-          # Name of the image/manifest to push (e.g. username/imagename or imagename)
+          registry: ghcr.io/${{ github.repository_owner }}
           image: ${{ steps.image-build.outputs.image }}
-          # 'The tag or tags of the image/manifest to push. For multiple tags, seperate by whitespace. For example, "latest v1"'
           tags: ${{ steps.image-build.outputs.tags }}
-          # Hostname and optional namespace to push the image to (eg. quay.io/username or quay.io)
-          registry: ${{ env.REGISTRY_URL }}
-          # # Username to use as credential to authenticate to the registry
-          # username: ${{ env.REGISTRY_USER }}
-          # # Password to use as credential to authenticate to the registry
-          # password: ${{ env.REGISTRY_PASSWORD }}
-          # Extra args to be passed to podman push. Separate arguments by newline. Do not use quotes - @actions/exec will do the quoting for you.
           extra-args: |
             --disable-content-trust
