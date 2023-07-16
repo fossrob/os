@@ -13,15 +13,15 @@ on:
 
 env:
     IMAGE_NAME: os
-    IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
-      id-token: write
+
     strategy:
       fail-fast: false
       matrix:
@@ -33,7 +33,15 @@ jobs:
             flavor: nvidia
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to registry
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+          registry: ghcr.io/${{ github.repository_owner }}
 
       - name: Matrix Variables
         id: matrix-variables
@@ -91,10 +99,10 @@ jobs:
           tags: ${{ steps.image-build.outputs.tags }}
           # Hostname and optional namespace to push the image to (eg. quay.io/username or quay.io)
           registry: ${{ env.REGISTRY_URL }}
-          # Username to use as credential to authenticate to the registry
-          username: ${{ env.REGISTRY_USER }}
-          # Password to use as credential to authenticate to the registry
-          password: ${{ env.REGISTRY_PASSWORD }}
+          # # Username to use as credential to authenticate to the registry
+          # username: ${{ env.REGISTRY_USER }}
+          # # Password to use as credential to authenticate to the registry
+          # password: ${{ env.REGISTRY_PASSWORD }}
           # Extra args to be passed to podman push. Separate arguments by newline. Do not use quotes - @actions/exec will do the quoting for you.
           extra-args: |
             --disable-content-trust
