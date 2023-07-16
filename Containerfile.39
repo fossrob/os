@@ -61,6 +61,7 @@ RUN echo "Customising packages..." && \
         cockpit cockpit-system cockpit-networkmanager cockpit-selinux cockpit-storaged cockpit-podman cockpit-machines cockpit-pcp \
         fd-find \
         input-remapper \
+        kernel-tools \
         kitty \
         koji \
         libgda libgda-sqlite \
