@@ -1,9 +1,7 @@
-ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
-ARG BASE_IMAGE="ghcr.io/ublue-os/silverblue-${IMAGE_FLAVOR}"
+ARG SOURCE_IMAGE="${SOURCE_IMAGE}"
 
 ################################### os #########################################
-FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS os
+FROM ${SOURCE_IMAGE} AS os
 
 COPY etc /etc
 COPY usr /usr
@@ -68,6 +66,7 @@ RUN echo "Customising packages..." && \
         fd-find \
         input-remapper \
         kitty \
+        koji \
         libgda libgda-sqlite \
         lm_sensors \
         nvtop \
