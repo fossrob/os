@@ -5,20 +5,19 @@ on:
     branches:
       - 'main'
     paths-ignore:
+      - 'LICENSE'
       - '**.md'
       - '**.txt'
   schedule:
-    - cron: '09 00 * * *'  # 09h00 UTC (+1h after ublue-os main and nvidia)
+    - cron: '0 9 * * *'  # 09h00 UTC (+1h after ublue-os main and nvidia)
   workflow_dispatch:  # allows you to run this workflow manually from the actions tab
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     permissions:
       contents: read
       packages: write
-
     strategy:
       fail-fast: false
       matrix:
@@ -30,7 +29,6 @@ jobs:
             flavor: nvidia
           - flavor: nvidia
             version: 39
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
