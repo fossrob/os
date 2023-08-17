@@ -58,6 +58,7 @@ RUN echo "Customising packages..." && \
         nvtop \
         podman-compose podmansh podman-tui \
         python3-pip \
+        tlp tlp-rdw \
         subscription-manager \
       && \
       systemctl enable cpupower.service && \
