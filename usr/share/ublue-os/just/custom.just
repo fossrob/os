@@ -5,3 +5,18 @@ distrobox-install:
 distrobox-f38:
   echo 'Creating F38 distrobox for the current user...'
   distrobox create --image registry.fedoraproject.org/fedora-toolbox:38 --name f38 -Y
+
+nix-devbox:
+  echo 'Installing nix...'
+  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+  echo 'Installing devbox...'
+  curl -fsSL https://get.jetpack.io/devbox | bash
+  echo 'You MUST reboot to continue'
+
+# Install nix and Devbox (Global Profile)
+nix-devbox-global:
+  echo 'Installing devbox global profile...'
+  devbox global pull https://devbox.getfleek.dev/high
+  echo 'run "devbox global run install-bash-hook" to configure bash shell'
+  echo 'run "devbox global run install-zsh-hook" to configure zsh shell'
+  echo 'run "devbox global run" to see other available configuration commands'
