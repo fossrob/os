@@ -22,7 +22,6 @@ RUN echo "Customising packages..." && \
       && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive,tailscale-stable \
         baobab \
-        cockpit-bridge \
         gnome-shell-extension-appindicator \
         gnome-shell-extension-caffeine \
         gnome-shell-extension-dash-to-panel \
