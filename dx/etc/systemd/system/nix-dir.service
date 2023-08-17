@@ -1,8 +1,0 @@
-[Unit]
-Description=Ensure /nix is present
-[Service]
-Type=oneshot
-ExecStartPre=chattr -i /
-ExecStart=mkdir --parents --mode 0755 /nix
-ExecStart=chown --recursive robin /nix
-ExecStop=chattr +i /
