@@ -24,9 +24,7 @@ RUN echo "Customising packages..." && \
         baobab \
         cockpit-bridge \
         gnome-shell-extension-appindicator \
-        gnome-shell-extension-blur-my-shell \
         gnome-shell-extension-caffeine \
-        gnome-shell-extension-dash-to-dock \
         gnome-shell-extension-dash-to-panel \
         gnome-shell-extension-just-perfection \
         hplip hplip-gui \
@@ -35,7 +33,8 @@ RUN echo "Customising packages..." && \
         tailscale \
         yaru-theme \
       && \
-      systemctl enable rpm-ostree-countme.service && \
+      systemctl unmask dconf-update.service && \
+      systemctl enable dconf-update.service && \
       systemctl enable tailscaled.service && \
     echo "...done!"
 
@@ -53,21 +52,16 @@ COPY dx/etc /etc
 
 RUN echo "Customising packages..." && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive \
-        cockpit-system cockpit-ostree cockpit-networkmanager cockpit-selinux cockpit-storaged cockpit-podman cockpit-machines cockpit-pcp \
-        fd-find \
+        fd-find ripgrep the_silver_searcher \
         input-remapper \
         kitty \
         lm_sensors \
         nvtop \
         podman-compose podmansh podman-tui \
         python3-pip \
-        ripgrep \
         subscription-manager \
-        the_silver_searcher \
       && \
       systemctl disable pmie.service && \
-      systemctl unmask dconf-update.service && \
-      systemctl enable dconf-update.service && \
       systemctl enable cpupower.service && \
       systemctl enable input-remapper.service && \
       systemctl enable nix.mount && \
