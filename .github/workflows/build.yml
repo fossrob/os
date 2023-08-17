@@ -12,6 +12,10 @@ on:
     - cron: '30 8 * * *'  # 08h30 UTC (+0.5h after ublue-os main and nvidia)
   workflow_dispatch:  # allows you to run this workflow manually from the actions tab
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
