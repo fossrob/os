@@ -23,7 +23,6 @@ RUN echo "Customising packages..." && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive,tailscale-stable \
         baobab \
         gnome-shell-extension-appindicator \
-        gnome-shell-extension-caffeine \
         gnome-shell-extension-dash-to-panel \
         gnome-shell-extension-just-perfection \
         hplip hplip-gui \
@@ -64,6 +63,14 @@ RUN echo "Customising packages..." && \
       systemctl enable input-remapper.service && \
       systemctl enable nix.mount && \
       systemctl enable podman.socket && \
+    echo "...done!"
+
+RUN echo "Installing Inter font..." && \
+      curl -sL $(curl -s https://api.github.com/repos/rsms/inter/releases | jq -r '.[0].assets[0].browser_download_url') -o /tmp/inter.zip && \
+      mkdir -p /tmp/inter /usr/share/fonts/inter && \
+      unzip /tmp/inter.zip -d /tmp/inter/ && \
+      mv /tmp/inter/*.ttf /tmp/inter/*.ttc /tmp/inter/LICENSE.txt /usr/share/fonts/inter/ && \
+      fc-cache -f /usr/share/fonts/inter && \
     echo "...done!"
 
 RUN echo "Clean up and commit..." && \
