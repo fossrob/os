@@ -35,6 +35,7 @@ RUN echo "Customising packages..." && \
         tailscale \
         yaru-theme \
       && \
+      systemctl enable rpm-ostree-countme.service && \
       systemctl enable tailscaled.service && \
     echo "...done!"
 
@@ -52,18 +53,21 @@ COPY dx/etc /etc
 
 RUN echo "Customising packages..." && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive \
-        cockpit cockpit-system cockpit-networkmanager cockpit-selinux cockpit-storaged cockpit-podman cockpit-machines cockpit-pcp \
+        cockpit-system cockpit-ostree cockpit-networkmanager cockpit-selinux cockpit-storaged cockpit-podman cockpit-machines cockpit-pcp \
         fd-find \
         input-remapper \
         kitty \
         lm_sensors \
         nvtop \
-        podman-compose \
+        podman-compose podmansh podman-tui \
         python3-pip \
         ripgrep \
         subscription-manager \
         the_silver_searcher \
       && \
+      systemctl disable pmie.service && \
+      systemctl unmask dconf-update.service && \
+      systemctl enable dconf-update.service && \
       systemctl enable cpupower.service && \
       systemctl enable input-remapper.service && \
       systemctl enable nix.mount && \
