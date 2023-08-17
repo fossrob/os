@@ -60,7 +60,6 @@ RUN echo "Customising packages..." && \
         python3-pip \
         subscription-manager \
       && \
-      systemctl disable pmie.service && \
       systemctl enable cpupower.service && \
       systemctl enable input-remapper.service && \
       systemctl enable nix.mount && \
