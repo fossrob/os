@@ -71,6 +71,7 @@ RUN echo "Customising packages..." && \
       systemctl enable cpupower.service && \
       systemctl enable input-remapper.service && \
       systemctl enable nix.mount && \
+      systemctl enable podman.socket && \
     echo "...done!"
 
 RUN echo "Clean up and commit..." && \
