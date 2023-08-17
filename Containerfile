@@ -15,7 +15,6 @@ RUN echo "Customising packages..." && \
         fzf \
         gnome-initial-setup \
         gnome-classic-session \
-        gnome-disk-utility \
         gnome-software gnome-software-rpm-ostree \
         gnome-tour \
         htop \
@@ -23,29 +22,20 @@ RUN echo "Customising packages..." && \
       && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive,tailscale-stable \
         baobab \
+        cockpit-bridge \
         gnome-shell-extension-appindicator \
         gnome-shell-extension-blur-my-shell \
         gnome-shell-extension-caffeine \
         gnome-shell-extension-dash-to-dock \
         gnome-shell-extension-dash-to-panel \
         gnome-shell-extension-just-perfection \
+        hplip hplip-gui \
         kitty-terminfo \
         powertop \
         tailscale \
         yaru-theme \
-        ddccontrol ddccontrol-gtk \
-        cockpit-bridge \
-        hplip hplip-gui \
       && \
       systemctl enable tailscaled.service && \
-    echo "...done!"
-
-RUN echo "Installing Inter font..." && \
-      curl -sL $(curl -s https://api.github.com/repos/rsms/inter/releases | jq -r '.[0].assets[0].browser_download_url') -o /tmp/inter.zip && \
-      mkdir -p /tmp/inter /usr/share/fonts/inter && \
-      unzip /tmp/inter.zip -d /tmp/inter/ && \
-      mv /tmp/inter/*.ttf /tmp/inter/*.ttc /tmp/inter/LICENSE.txt /usr/share/fonts/inter/ && \
-      fc-cache -f /usr/share/fonts/inter && \
     echo "...done!"
 
 RUN echo "Clean up and commit..." && \
@@ -66,8 +56,6 @@ RUN echo "Customising packages..." && \
         fd-find \
         input-remapper \
         kitty \
-        koji \
-        libgda libgda-sqlite \
         lm_sensors \
         nvtop \
         podman-compose \
@@ -75,17 +63,6 @@ RUN echo "Customising packages..." && \
         ripgrep \
         subscription-manager \
         the_silver_searcher \
-      && \
-      rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive \
-        edk2-tools \
-        genisoimage \
-        lsb \
-        procps \
-        qemu \
-        socat \
-        spice-gtk-tools \
-        swtpm \
-        xrandr \
       && \
       systemctl enable cpupower.service && \
       systemctl enable input-remapper.service && \

@@ -23,7 +23,7 @@ jobs:
       matrix:
         base: [os, os-dx]
         flavor: [main, nvidia]
-        version: [38,39]
+        version: [38, 39]
         exclude:
           - base: os
             flavor: nvidia
