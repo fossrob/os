@@ -50,8 +50,6 @@ COPY dx/etc /etc
 
 RUN echo "Customising packages..." && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive \
-        direnv \
-        fd-find ripgrep the_silver_searcher \
         input-remapper \
         kitty \
         lm_sensors \
