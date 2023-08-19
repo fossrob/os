@@ -25,12 +25,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        base: [os, os-dx]
+        base: [os, dx]
         flavor: [main, nvidia]
         version: [38, 39]
         exclude:
           - base: os
             flavor: nvidia
+          - base: dx
+            version: 39
           - flavor: nvidia
             version: 39
     steps:
@@ -54,7 +56,7 @@ jobs:
               echo "image-name=${{ format('{0}-{1}', matrix.base, matrix.flavor) }}" >> $GITHUB_OUTPUT
           fi
           if [[ ${{ matrix.version }} -eq 38 ]]; then
-            echo "containerfile=Containerfile" >> $GITHUB_OUTPUT
+            echo "containerfile=Containerfile.${{ matrix.base }}" >> $GITHUB_OUTPUT
             echo "source-image=ghcr.io/ublue-os/silverblue-${{ matrix.flavor }}:${{ matrix.version }}" >> $GITHUB_OUTPUT
           else
             echo "containerfile=Containerfile.39" >> $GITHUB_OUTPUT
