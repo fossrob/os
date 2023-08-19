@@ -58,6 +58,7 @@ RUN echo "Customising packages..." && \
         python3-pip \
         tlp tlp-rdw \
         subscription-manager \
+        zsh \
       && \
       systemctl enable cpupower.service && \
       systemctl enable input-remapper.service && \
