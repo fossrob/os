@@ -75,8 +75,6 @@ jobs:
             SOURCE_IMAGE=${{ steps.variables.outputs.source-image }}
           oci: false
           layers: true
-          extra-args: |
-            --target=${{ matrix.base }}
 
       - name: Push to registry
         uses: redhat-actions/push-to-registry@v2
