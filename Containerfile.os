@@ -32,6 +32,7 @@ RUN echo "Customising packages..." && \
       && \
       systemctl unmask dconf-update.service && \
       systemctl enable dconf-update.service && \
+      systemctl enable fstrim.timer && \
       systemctl enable tailscaled.service && \
     echo "...done!"
 
