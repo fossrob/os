@@ -22,6 +22,7 @@ RUN echo "Customising packages..." && \
       && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive,tailscale-stable \
         baobab \
+        fish \
         hplip hplip-gui \
         input-remapper \
         kitty \
