@@ -19,7 +19,7 @@ RUN echo "Customising packages..." && \
         gnome-software gnome-software-rpm-ostree \
         gnome-tour \
         lohit-assamese-fonts lohit-bengali-fonts lohit-devanagari-fonts lohit-gujarati-fonts lohit-kannada-fonts lohit-marathi-fonts lohit-odia-fonts lohit-tamil-fonts lohit-telugu-fonts \
-        supergfxctl gnome-shell-extension-supergfxctl-gex dconf-editor \
+        supergfxctl gnome-shell-extension-supergfxctl-gex \
       && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive,tailscale-stable \
         bat fd-find fzf ripgrep the_silver_searcher \
