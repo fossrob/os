@@ -6,7 +6,6 @@ COPY etc /etc
 COPY dx/etc /etc
 COPY usr /usr
 
-RUN rpm-ostree update
 RUN for repo in $(ls /etc/yum.repos.d/*.repo); do sed -i $repo -e 's/enabled=1/enabled=0/'; done
 
 RUN echo "Customising packages..." && \
