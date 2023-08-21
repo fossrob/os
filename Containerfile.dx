@@ -9,7 +9,7 @@ COPY usr /usr
 RUN for repo in $(ls /etc/yum.repos.d/*.repo); do sed -i $repo -e 's/enabled=1/enabled=0/'; done
 
 RUN echo "Customising packages..." && \
-      rpm -q supergfxctl && rpm-ostree override remove supergfxctl gnome-shell-extension-supergfxctl-gex dconf-editor && \
+      rpm-ostree override remove $(rpm -qa --queryformat='%{NAME} ' supergfxctl gnome-shell-extension-supergfxctl-gex dconf-editor) && \
       rpm-ostree override remove \
         distrobox \
         fedora-repos-modular \
