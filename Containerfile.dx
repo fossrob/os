@@ -11,16 +11,18 @@ RUN for repo in $(ls /etc/yum.repos.d/*.repo); do sed -i $repo -e 's/enabled=1/e
 RUN echo "Customising packages..." && \
       rpm-ostree override remove \
         distrobox \
-        firefox firefox-langpacks \
-        fzf \
-        gnome-initial-setup \
+        fedora-repos-modular \
+        firefox firefox-langpacks mozilla-openh264 \
+        fzf htop \
         gnome-classic-session \
+        gnome-initial-setup \
         gnome-software gnome-software-rpm-ostree \
         gnome-tour \
-        htop \
+        lohit-assamese-fonts lohit-bengali-fonts lohit-devanagari-fonts lohit-gujarati-fonts lohit-kannada-fonts lohit-marathi-fonts lohit-odia-fonts lohit-tamil-fonts lohit-telugu-fonts \
+        supergfxctl gnome-shell-extension-supergfxctl-gex dconf-editor \
       && \
       rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive,tailscale-stable \
-        dnf5 \
+        bat fd-find fzf ripgrep the_silver_searcher \
         hplip hplip-gui \
         input-remapper \
         kitty fish zsh \
