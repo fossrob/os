@@ -6,56 +6,27 @@ COPY etc /etc
 COPY dx/etc /etc
 COPY usr /usr
 
-RUN for repo in $(ls /etc/yum.repos.d/*.repo); do sed -i $repo -e 's/enabled=1/enabled=0/'; done
+ADD build.sh /tmp
 
 RUN echo "Customising packages..." && \
-      rpm-ostree override remove $(rpm -qa --queryformat='%{NAME} ' supergfxctl gnome-shell-extension-supergfxctl-gex dconf-editor) && \
-      rpm-ostree override remove \
-        distrobox \
-        fedora-repos-modular \
-        firefox firefox-langpacks mozilla-openh264 \
-        fzf htop \
-        gnome-classic-session \
-        gnome-initial-setup \
-        gnome-software gnome-software-rpm-ostree \
-        gnome-tour \
-        lohit-assamese-fonts lohit-bengali-fonts lohit-devanagari-fonts lohit-gujarati-fonts lohit-kannada-fonts lohit-marathi-fonts lohit-odia-fonts lohit-tamil-fonts lohit-telugu-fonts \
-      && \
-      rpm-ostree install --idempotent --enablerepo fedora,updates,updates-archive,tailscale-stable \
-        bat fd-find fzf ripgrep the_silver_searcher \
-        hplip hplip-gui \
-        input-remapper \
-        kitty fish zsh \
-        lm_sensors nvtop powertop tlp tlp-rdw \
-        podman-compose podmansh podman-tui \
-        python3-pip \
-        subscription-manager \
-        tailscale \
-      && \
+      /tmp/build.sh && \
       systemctl unmask dconf-update.service && \
       systemctl enable dconf-update.service && \
       systemctl enable fstrim.timer && \
-      systemctl enable tailscaled.service && \
       systemctl enable podman.socket && \
+      systemctl enable tailscaled.service && \
     echo "...done!"
 
 RUN echo "Installing Inter font..." && \
       curl -sL $(curl -s https://api.github.com/repos/rsms/inter/releases | jq -r '.[0].assets[0].browser_download_url') -o /tmp/inter.zip && \
       mkdir -p /usr/share/fonts/inter && \
-      unzip /tmp/inter.zip -d /usr/share/fonts/inter/ && \
+      unzip /tmp/inter.zip -x 'web*' 'extras*' -d /usr/share/fonts/inter && \
       fc-cache -f /usr/share/fonts/inter && \
     echo "...done!"
 
-RUN echo "Installing Hack Nerd font..." && \
-      curl -sL $(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | jq -r '.assets[] | select(.name == "Hack.zip").browser_download_url') -o /tmp/hack.zip && \
-      mkdir -p /usr/share/fonts/hack-nf && \
-      unzip /tmp/hack.zip -d /usr/share/fonts/hack-nf/ && \
-      fc-cache -f /usr/share/fonts/hack-nf && \
-    echo "...done!"
-
 RUN echo "Clean up and commit..." && \
-      rm -f /etc/yum.repos.d/tailscale.repo && \
       rm -rf /tmp/* /var/* && \
       ostree container commit && \
-      mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
+      mkdir -p /var/tmp && \
+      chmod -R 1777 /var/tmp && \
     echo "...done!"
