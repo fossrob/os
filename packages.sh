@@ -27,37 +27,35 @@ INCLUDED_PACKAGES=(
   gnome-tweaks
   raw-thumbnailer
 
-  alsa-firmware
-  apr
-  apr-util
+  # alsa-firmware
+  # apr
+  # apr-util
   ffmpeg
   ffmpeg-libs
   ffmpegthumbnailer
-  grub2-tools-extra
+  # grub2-tools-extra
   heif-pixbuf-loader
   intel-media-driver
-  kernel-devel-matched
-  kernel-tools
+  # kernel-devel-matched
+  # kernel-tools
   libheif-freeworld
   libheif-tools
-  libratbag-ratbagd
+  # libratbag-ratbagd
   libva-intel-driver
   libva-utils
-  lshw
+  # lshw
   mesa-va-drivers-freeworld
-  net-tools
-  nvme-cli
-  nvtop
-  openssl
+  # net-tools
+  # nvme-cli
+  # nvtop
+  # openssl
   pipewire-codec-aptx
-  smartmontools
-  symlinks
-  tcpdump
-  tmux
-  traceroute
-  vim
-  zstd
-  wireguard-tools
+  # smartmontools
+  # symlinks
+  # tcpdump
+  # traceroute
+  # zstd
+  # wireguard-tools
 )
 
 EXCLUDED_PACKAGES=(
