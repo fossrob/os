@@ -2,8 +2,7 @@ ARG SOURCE_IMAGE="${SOURCE_IMAGE}"
 
 FROM ${SOURCE_IMAGE} as main
 
-COPY os/etc dx/etc /etc
-COPY os/usr /usr
+COPY os dx /
 
 COPY packages.sh nvidia.sh /tmp
 

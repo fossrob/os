@@ -2,8 +2,7 @@ ARG SOURCE_IMAGE="${SOURCE_IMAGE}"
 
 FROM ${SOURCE_IMAGE} as main
 
-COPY etc /etc
-COPY usr /usr
+COPY os /
 
 RUN for repo in $(ls /etc/yum.repos.d/*.repo); do sed -i $repo -e 's/enabled=1/enabled=0/'; done
 
