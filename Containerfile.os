@@ -1,6 +1,6 @@
 ARG SOURCE_IMAGE="${SOURCE_IMAGE}"
 
-FROM ${SOURCE_IMAGE}
+FROM ${SOURCE_IMAGE} as main
 
 COPY etc /etc
 COPY usr /usr
