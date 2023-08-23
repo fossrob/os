@@ -1,15 +1,18 @@
 ARG SOURCE_IMAGE="${SOURCE_IMAGE}"
 
-FROM ${SOURCE_IMAGE}
+FROM ${SOURCE_IMAGE} as main
 
-COPY etc /etc
-COPY dx/etc /etc
-COPY usr /usr
+COPY os/etc dx/etc /etc
+COPY os/usr /usr
 
-ADD build.sh /tmp
+COPY packages.sh nvidia.sh /tmp
 
-RUN echo "Customising packages..." && \
-      /tmp/build.sh && \
+RUN echo "Customising packages & services..." && \
+      rpm-ostree install --idempotent \
+        https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
+      && \
+      /tmp/packages.sh && \
       systemctl unmask dconf-update.service && \
       systemctl enable dconf-update.service && \
       systemctl enable fstrim.timer && \
@@ -27,6 +30,18 @@ RUN echo "Installing Inter font..." && \
 RUN echo "Clean up and commit..." && \
       rm -rf /tmp/* /var/* && \
       ostree container commit && \
-      mkdir -p /var/tmp && \
-      chmod -R 1777 /var/tmp && \
+    echo "...done!"
+
+FROM main as nvidia
+
+COPY --from=ghcr.io/ublue-os/akmods-nvidia:38-535 / .
+COPY nvidia.sh /tmp
+
+RUN echo "Installing nvidia drivers..." && \
+      /tmp/nvidia.sh && \
+    echo "...done!"
+
+RUN echo "Clean up and commit..." && \
+      rm -rf /tmp/* /var/* && \
+      ostree container commit && \
     echo "...done!"

@@ -25,9 +25,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        base: [os, dx]
-        flavor: [main, nvidia]
-        version: [38, 39]
+        base: [ os, dx ]
+        flavor: [ main, nvidia ]
+        version: [ 38 ]
         exclude:
           - base: os
             flavor: nvidia
@@ -50,17 +50,19 @@ jobs:
         id: variables
         run: |
           echo "datestamp=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
+
           if [[ "${{ matrix.flavor }}" == "main" ]]; then
               echo "image-name=${{ matrix.base }}" >> $GITHUB_OUTPUT
           else
               echo "image-name=${{ format('{0}-{1}', matrix.base, matrix.flavor) }}" >> $GITHUB_OUTPUT
           fi
-          if [[ ${{ matrix.version }} -eq 38 ]]; then
-            echo "containerfile=Containerfile.${{ matrix.base }}" >> $GITHUB_OUTPUT
-            echo "source-image=ghcr.io/ublue-os/silverblue-${{ matrix.flavor }}:${{ matrix.version }}" >> $GITHUB_OUTPUT
-          else
+
+          if [[ ${{ matrix.version }} -eq 39 ]]; then
             echo "containerfile=Containerfile.39" >> $GITHUB_OUTPUT
             echo "source-image=quay.io/fedora/fedora-silverblue:${{ matrix.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "source-image=quay.io/fedora-ostree-desktops/silverblue:${{ matrix.version }}" >> $GITHUB_OUTPUT
+            echo "containerfile=Containerfile.${{ matrix.base }}" >> $GITHUB_OUTPUT
           fi
 
       - name: Build image
@@ -75,6 +77,8 @@ jobs:
             SOURCE_IMAGE=${{ steps.variables.outputs.source-image }}
           oci: false
           layers: true
+          extra-args: |
+            --target=${{ matrix.flavor }}
 
       - name: Push to registry
         uses: redhat-actions/push-to-registry@v2
