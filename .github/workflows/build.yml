@@ -56,7 +56,7 @@ jobs:
           oci: false
           layers: true
           extra-args: |
-            --loglevel=error
+            --log-level error
 
       - name: Push to registry
         uses: redhat-actions/push-to-registry@v2
@@ -127,7 +127,7 @@ jobs:
           oci: false
           layers: true
           extra-args: |
-            --target=${{ matrix.flavor }} --loglevel=error
+            --target ${{ matrix.flavor }} --log-level error
 
       - name: Push to registry
         uses: redhat-actions/push-to-registry@v2
