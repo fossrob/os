@@ -67,6 +67,7 @@ jobs:
           extra-args: |
             --disable-content-trust
   build-os:
+    needs: build-kmods
     runs-on: ubuntu-latest
     permissions:
       contents: read
