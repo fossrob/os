@@ -6,6 +6,8 @@ COPY os dx /
 
 COPY packages.sh /tmp/
 
+COPY --from=ghcr.io/fossrob/kmods:38 / .
+
 RUN echo "Customising packages & services..." && \
       sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo && \
       mkdir -p /var/lib/alternatives && \
@@ -14,6 +16,7 @@ RUN echo "Customising packages & services..." && \
         https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
       && \
       /tmp/packages.sh && \
+      rpm-ostree install --idempotent /rpms/kmod-v4l2loopback*.rpm && \
       systemctl unmask dconf-update.service && \
       systemctl enable dconf-update.service && \
       systemctl enable fstrim.timer && \
@@ -35,11 +38,8 @@ RUN echo "Clean up and commit..." && \
 
 FROM main as nvidia
 
-COPY --from=ghcr.io/ublue-os/akmods-nvidia:38-535 / .
-COPY nvidia.sh /tmp
-
 RUN echo "Installing nvidia drivers..." && \
-      /tmp/nvidia.sh && \
+      rpm-ostree install --idempotent /rpms/kmod-nvidia*.rpm && \
     echo "...done!"
 
 RUN echo "Clean up and commit..." && \

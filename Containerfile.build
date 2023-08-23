@@ -24,7 +24,6 @@ RUN echo "Build nvidia (latest)..." && \
       akmods --force --kernels "${KERNEL}" --kmod nvidia && \
     echo "...done!"
 
-
 RUN echo "Build v4l2loopback..." && \
       ARCH="$(rpm -E '%_arch')" && \
       KERNEL="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" && \
