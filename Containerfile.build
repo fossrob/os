@@ -16,22 +16,11 @@ FROM ${SOURCE_IMAGE} as build
 #       chmod 1777 /tmp /var/tmp && \
 #     echo "...done!"
 
-RUN echo "Build nvidia (latest)..." && \
-      KERNEL="$(rpm -q kernel-devel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" && \
-      dnf install -y install akmod-nvidia && \
-      akmods --force --kernels "${KERNEL}" --kmod nvidia && \
-    echo "...done!"
+RUN dnf update -y
 
-RUN echo "Build v4l2loopback..." && \
-      KERNEL="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" && \
-      dnf install -y --idempotent akmod-v4l2loopback && \
-      akmods --force --kernels "${KERNEL}" --kmod v4l2loopback && \
-    echo "...done!"
+RUN akmods --force
 
-RUN echo "Copy RPMS..." && \
-      mkdir -p rpms  && \
-      find /var/cache/akmods -type f -name '*.rpm' -exec cp {} /rpms/ \;  && \
-    echo "...done!"
+RUN find /var/cache/akmods -type f -name '*.rpm' -exec cp {} /rpms/ \;
 
 FROM scratch
 
