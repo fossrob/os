@@ -15,7 +15,7 @@ INCLUDED_PACKAGES=(
   just
   kitty
   lm_sensors nvtop powertop tlp tlp-rdw
-  openh264
+  # openh264
   p7zip p7zip-plugins
   podman-compose podmansh
   python3-pip
