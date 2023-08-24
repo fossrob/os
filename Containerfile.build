@@ -18,7 +18,7 @@ FROM ${SOURCE_IMAGE} as build
 
 RUN dnf update -y
 
-RUN akmods --force
+RUN akmods --force --kernels "$(rpm -q kernel-devel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 
 RUN find /var/cache/akmods -type f -name '*.rpm' -exec cp {} /rpms/ \;
 
