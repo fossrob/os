@@ -41,7 +41,7 @@ jobs:
         id: variables
         run: |
           echo "datestamp=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
-          echo "source-image=quay.io/fedora-ostree-desktops/base:${{ matrix.version }}" >> $GITHUB_OUTPUT
+          echo "source-image=ghcr.io/fossrob/kmod-build:${{ matrix.version }}" >> $GITHUB_OUTPUT
 
       - name: Build image
         id: image
