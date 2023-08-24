@@ -39,7 +39,10 @@ RUN echo "Clean up and commit..." && \
 FROM main as nvidia
 
 RUN echo "Installing nvidia drivers..." && \
-      rpm-ostree install --idempotent /rpms/kmod-nvidia*.rpm && \
+      rpm-ostree install --idempotent \
+        nvidia-vaapi-driver \
+        /rpms/kmod-nvidia*.rpm \
+      && \
     echo "...done!"
 
 RUN echo "Clean up and commit..." && \

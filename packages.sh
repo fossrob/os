@@ -8,13 +8,15 @@ INCLUDED_PACKAGES=(
   bitstreamverasansmono-nerd-fonts cascadiacode-nerd-fonts dejavusansmono-nerd-fonts droidsansmono-nerd-fonts
     firacode-nerd-fonts firamono-nerd-fonts hack-nerd-fonts ibmplexmono-nerd-fonts inconsolata-nerd-fonts
     jetbrainsmono-nerd-fonts liberationmono-nerd-fonts meslo-nerd-fonts nerdfontssymbolsonly-nerd-fonts noto-nerd-fonts
-    robotomono-nerd-fonts sourcecodepro-nerd-fonts ubuntumono-nerd-fonts
+    robotomono-nerd-fonts sourcecodepro-nerd-fonts ubuntumono-nerd-fonts ubuntu-nerd-fonts
   bat bat-extras cheat cheat-bash-completion cheat-zsh-completion duf exa git-delta fd-find fzf ripgrep the_silver_searcher
   hplip hplip-gui
   input-remapper
   just
   kitty
   lm_sensors nvtop powertop tlp tlp-rdw
+  openh264
+  p7zip p7zip-plugins
   podman-compose podmansh
   python3-pip
   starship
