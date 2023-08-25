@@ -9,7 +9,8 @@ on:
       - '**.md'
       - '**.txt'
   schedule:
-    - cron: '30 8 * * *'  # 08h30 UTC (+0.5h after ublue-os main and nvidia)
+    - cron: '0 4 * * *'  # 04h00 UTC (after https://quay.io/repository/fedora-ostree-desktops/silverblue)
+    # - cron: '30 8 * * *'  # 08h30 UTC (+0.5h after ublue-os main and nvidia)
   workflow_dispatch:  # allows you to run this workflow manually from the actions tab
 
 concurrency:
