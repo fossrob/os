@@ -40,6 +40,8 @@ FROM main as nvidia
 RUN echo "Installing nvidia drivers..." && \
       rpm-ostree install --idempotent \
         nvidia-vaapi-driver \
+        xorg-x11-drv-nvidia \
+        xorg-x11-drv-nvidia-cuda \
         /rpms/kmod-nvidia*.rpm \
       && \
     echo "...done!"
