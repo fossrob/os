@@ -24,11 +24,11 @@ INCLUDED_PACKAGES=(
   tailscale
   tmux
   vim
+  virt-install libvirt-daemon-config-network libvirt-daemon-kvm qemu-kvm virt-manager virt-viewer guestfs-tools
   zsh
   adw-gtk3-theme
   gnome-tweaks
   raw-thumbnailer
-
   # alsa-firmware
   # apr
   # apr-util
