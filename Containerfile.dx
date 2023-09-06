@@ -37,10 +37,10 @@ RUN echo "Clean up and commit..." && \
 
 FROM main as nvidia
 
+#        xorg-x11-drv-nvidia \
 RUN echo "Installing nvidia drivers..." && \
       rpm-ostree install --idempotent \
         nvidia-vaapi-driver \
-        xorg-x11-drv-nvidia \
         xorg-x11-drv-nvidia-cuda \
         /rpms/kmod-nvidia*.rpm \
       && \
