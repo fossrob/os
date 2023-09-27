@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [ 38 ]
+        version: [ 38, 39 ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
