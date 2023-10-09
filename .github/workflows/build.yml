@@ -26,55 +26,6 @@ permissions:
 
 jobs:
 
-  build-kmods:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        version: [ 38, 39 ]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Log in to registry
-        uses: redhat-actions/podman-login@v1
-        with:
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-          registry: ghcr.io/${{ github.repository_owner }}
-
-      - name: Generate variables
-        id: variables
-        run: |
-          echo "datestamp=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
-          echo "source-image=ghcr.io/fossrob/kmod-build:${{ matrix.version }}" >> $GITHUB_OUTPUT
-
-      - name: Build image
-        id: image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          containerfiles: |
-            Containerfile.build
-          image: kmods
-          tags: ${{ matrix.version }} ${{ matrix.version }}-${{ steps.variables.outputs.datestamp }}
-          build-args: |
-            SOURCE_IMAGE=${{ steps.variables.outputs.source-image }}
-          oci: false
-          layers: true
-          extra-args: |
-            --log-level error
-
-      - name: Push to registry
-        uses: redhat-actions/push-to-registry@v2
-        with:
-          registry: ghcr.io/${{ github.repository_owner }}
-          image: ${{ steps.image.outputs.image }}
-          tags: ${{ steps.image.outputs.tags }}
-          extra-args: |
-            --disable-content-trust
   build-os:
     runs-on: ubuntu-latest
 
