@@ -1,0 +1,29 @@
+ARG FEDORA_VERSION=39
+ARG VARIANT=${VARIANT:-desktop}
+
+FROM ghcr.io/fossrob/fedora-custom:latest
+
+ARG FEDORA_VERSION
+ARG VARIANT
+
+COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-just /
+
+COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_VERSION} /rpms /tmp/akmods-rpms
+
+RUN echo "Installing kmods..." && \
+      rpm-ostree install /tmp/akmods-rpms/ublue-os/ublue-os-akmods*.rpm && \
+      rpm-ostree install \
+        /tmp/akmods-rpms/kmods/kmod-v4l2loopback*.rpm \
+      && \
+    echo "...done!"
+
+COPY packages.${VARIANT}.sh /tmp/
+
+RUN echo "Customising packages..." && \
+      /tmp/packages.${VARIANT}.sh && \
+    echo "...done!"
+
+RUN echo "Clean up and commit..." && \
+      rm -rf /tmp/* /var/* && \
+      ostree container commit && \
+    echo "...done!"

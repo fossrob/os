@@ -20,7 +20,7 @@ layer-image container_file:
 
   container_tag=$(echo "{{container_file}}" | sed -re 's/^Containerfile\.//')
 
-  podman build --tag fedora-test:${container_tag} --file {{container_file}}
+  podman build --no-cache --tag fedora-test:${container_tag} --file {{container_file}}
   podman push fedora-test:${container_tag} localhost:5000/fedora-test:${container_tag}
 
 build image="dx":

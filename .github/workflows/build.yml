@@ -17,7 +17,15 @@ concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  registry: ghcr.io
+
+permissions:
+  contents: read
+  packages: write
+
 jobs:
+
   build-kmods:
     runs-on: ubuntu-latest
     permissions:
@@ -68,74 +76,28 @@ jobs:
           extra-args: |
             --disable-content-trust
   build-os:
-    needs: build-kmods
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+
     strategy:
       fail-fast: false
       matrix:
-        base: [ os, dx ]
-        flavor: [ main, nvidia ]
-        version: [ 38 ]
-        exclude:
-          - base: os
-            flavor: nvidia
-          - base: dx
-            version: 39
-          - flavor: nvidia
-            version: 39
+        os: [ fedora ]
+        variant: [ desktop, laptop ]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Log in to registry
-        uses: redhat-actions/podman-login@v1
-        with:
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-          registry: ghcr.io/${{ github.repository_owner }}
+        run: podman login --username ${{ github.actor }} --password ${{ github.token }} ${{ env.registry }}/${{ github.repository_owner }}
 
-      - name: Generate variables
-        id: variables
+      - name: Build container
         run: |
-          echo "datestamp=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
+          podman build --build-arg VARIANT=${{ matrix.variant }} --tag os:${{ matrix.variant }} --file Containerfile.${{ matrix.variant }}
 
-          if [[ "${{ matrix.flavor }}" == "main" ]]; then
-              echo "image-name=${{ matrix.base }}" >> $GITHUB_OUTPUT
-          else
-              echo "image-name=${{ format('{0}-{1}', matrix.base, matrix.flavor) }}" >> $GITHUB_OUTPUT
-          fi
+      - name: Push container
+        run: |
+          podman push os:${{ matrix.variant }} ${{ env.registry }}/${{ github.repository_owner }}/${{ matrix.os }}:${{ matrix.variant }}
 
-          if [[ ${{ matrix.version }} -eq 39 ]]; then
-            echo "containerfile=Containerfile.39" >> $GITHUB_OUTPUT
-            echo "source-image=quay.io/fedora/fedora-silverblue:${{ matrix.version }}" >> $GITHUB_OUTPUT
-          else
-            echo "source-image=quay.io/fedora-ostree-desktops/silverblue:${{ matrix.version }}" >> $GITHUB_OUTPUT
-            echo "containerfile=Containerfile.${{ matrix.base }}" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Build image
-        id: image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          containerfiles: |
-            ${{ steps.variables.outputs.containerfile }}
-          image: ${{ steps.variables.outputs.image-name }}
-          tags: ${{ matrix.version }} ${{ matrix.version }}-${{ steps.variables.outputs.datestamp }}
-          build-args: |
-            SOURCE_IMAGE=${{ steps.variables.outputs.source-image }}
-          oci: false
-          layers: true
-          extra-args: |
-            --target ${{ matrix.flavor }} --log-level error
-
-      - name: Push to registry
-        uses: redhat-actions/push-to-registry@v2
-        with:
-          registry: ghcr.io/${{ github.repository_owner }}
-          image: ${{ steps.image.outputs.image }}
-          tags: ${{ steps.image.outputs.tags }}
-          extra-args: |
-            --disable-content-trust
+      - name: Log out of registry
+        run: podman logout ${{ env.registry }}/${{ github.repository_owner }}
