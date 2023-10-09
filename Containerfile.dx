@@ -30,14 +30,6 @@ RUN echo "Installing Inter font..." && \
       fc-cache -f /usr/share/fonts/inter && \
     echo "...done!"
 
-RUN echo "Clean up and commit..." && \
-      rm -rf /tmp/* /var/* && \
-      ostree container commit && \
-    echo "...done!"
-
-FROM main as nvidia
-
-#        xorg-x11-drv-nvidia \
 RUN echo "Installing nvidia drivers..." && \
       rpm-ostree install --idempotent \
         nvidia-vaapi-driver \
