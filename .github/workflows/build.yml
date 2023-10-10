@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  registry: ghcr.io
+  gh_registry: ghcr.io
 
 permissions:
   contents: read
@@ -34,21 +34,27 @@ jobs:
       matrix:
         os: [ fedora ]
         variant: [ desktop, laptop ]
+        version: [ 39 ]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Variables
+        run: |
+          echo image=${{ matrix.os }}-${{ matrix.variant }}:${{ matrix.version }} >> $GITHUB_ENV
+          echo registry=${{ env.gh_registry }}/${{ github.repository_owner }} >> $GITHUB_ENV
+
       - name: Log in to registry
-        run: podman login --username ${{ github.actor }} --password ${{ github.token }} ${{ env.registry }}/${{ github.repository_owner }}
+        run: podman login --username ${{ github.actor }} --password ${{ github.token }} ${{ env.registry }}
 
       - name: Build container
         run: |
-          podman build --build-arg VARIANT=${{ matrix.variant }} --tag os:${{ matrix.variant }} --file Containerfile.${{ matrix.variant }}
+          podman build --build-arg VARIANT=${{ matrix.variant }} --tag ${{ env.image }} --file Containerfile.${{ matrix.variant }}
 
       - name: Push container
         run: |
-          podman push os:${{ matrix.variant }} ${{ env.registry }}/${{ github.repository_owner }}/${{ matrix.os }}:${{ matrix.variant }}
+          podman push ${{ env.image }} ${{ env.registry }}/${{ env.image }}
 
       - name: Log out of registry
-        run: podman logout ${{ env.registry }}/${{ github.repository_owner }}
+        run: podman logout ${{ env.registry }}
