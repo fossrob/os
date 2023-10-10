@@ -31,7 +31,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ fedora ]
-        variant: [ desktop, laptop ]
+        variant: [ desktop, laptop, z ]
         version: [ 39 ]
 
     steps:
