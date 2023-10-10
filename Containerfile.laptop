@@ -1,7 +1,7 @@
-ARG FEDORA_VERSION=39
+ARG FEDORA_VERSION=${FEDORA_VERSION:-39}
 ARG VARIANT=${VARIANT:-desktop}
 
-FROM ghcr.io/fossrob/fedora-custom:latest
+FROM ghcr.io/fossrob/fedora-custom:${FEDORA_VERSION}
 
 ARG FEDORA_VERSION
 ARG VARIANT
