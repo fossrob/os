@@ -3,15 +3,14 @@ name: build-os
 on:
   push:
     branches:
-      - 'main'
+      - main
     paths-ignore:
-      - 'LICENSE'
+      - LICENSE
       - '**.md'
       - '**.txt'
   schedule:
-    - cron: '0 4 * * *'  # 04h00 UTC (after https://quay.io/repository/fedora-ostree-desktops/silverblue)
-    # - cron: '30 8 * * *'  # 08h30 UTC (+0.5h after ublue-os main and nvidia)
-  workflow_dispatch:  # allows you to run this workflow manually from the actions tab
+    - cron: 0 1,7,13,19 * * *
+  workflow_dispatch: {}
 
 concurrency:
   group: ${{ github.ref }}
@@ -25,43 +24,8 @@ permissions:
   packages: write
 
 jobs:
-  build-kmods:
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [ kmods ]
-        version: [ 39 ]
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Variables
-        run: |
-          echo image=${{ matrix.name }}:${{ matrix.version }} >> $GITHUB_ENV
-          echo registry=${{ env.gh_registry }}/${{ github.repository_owner }} >> $GITHUB_ENV
-
-      - name: Log in to registry
-        run: podman login --username ${{ github.actor }} --password ${{ github.token }} ${{ env.registry }}
-
-      - name: Build container
-        run: |
-          podman build --cache-from ${{ env.registry }}/${{ env.image }} --build-arg FEDORA_VERSION=${{ matrix.version }} --tag ${{ env.image }} --file Containerfile.${{ matrix.name }}
-
-      - name: Push container
-        run: |
-          podman push ${{ env.image }} ${{ env.registry }}/${{ env.image }}
-
-      - name: Log out of registry
-        run: podman logout ${{ env.registry }}
-
-
   build-os:
     runs-on: ubuntu-latest
-
-    needs: build-kmods
 
     strategy:
       fail-fast: false
@@ -80,15 +44,15 @@ jobs:
           echo registry=${{ env.gh_registry }}/${{ github.repository_owner }} >> $GITHUB_ENV
 
       - name: Log in to registry
-        run: podman login --username ${{ github.actor }} --password ${{ github.token }} ${{ env.registry }}
+        run: podman login --username ${{ github.actor }} --password ${{ github.token }} ${registry}
 
       - name: Build container
         run: |
-          podman build --build-arg FEDORA_VERSION=${{ matrix.version }} --build-arg VARIANT=${{ matrix.variant }} --tag ${{ env.image }} --file Containerfile.${{ matrix.variant }}
+          podman build --build-arg FEDORA_VERSION=${{ matrix.version }} --build-arg VARIANT=${{ matrix.variant }} --tag ${image} --file Containerfile.${{ matrix.variant }}
 
       - name: Push container
         run: |
-          podman push ${{ env.image }} ${{ env.registry }}/${{ env.image }}
+          podman push ${image} ${registry}/${image}
 
       - name: Log out of registry
-        run: podman logout ${{ env.registry }}
+        run: podman logout ${registry}
