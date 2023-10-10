@@ -8,7 +8,7 @@ ARG VARIANT
 
 COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-just /
 
-COPY --from=ghcr.io/fossrob/kmods:${FEDORA_VERSION} /rpms /tmp/akmods-rpms
+COPY --from=ghcr.io/fossrob/fedora-kmods:${FEDORA_VERSION} /rpms /tmp/akmods-rpms
 
 RUN echo "Installing kmods..." && \
       rpm-ostree install \
