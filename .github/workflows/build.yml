@@ -25,9 +25,43 @@ permissions:
   packages: write
 
 jobs:
+  build-kmods:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [ kmods ]
+        version: [ 39 ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Variables
+        run: |
+          echo image=${{ matrix.name }}:${{ matrix.version }} >> $GITHUB_ENV
+          echo registry=${{ env.gh_registry }}/${{ github.repository_owner }} >> $GITHUB_ENV
+
+      - name: Log in to registry
+        run: podman login --username ${{ github.actor }} --password ${{ github.token }} ${{ env.registry }}
+
+      - name: Build container
+        run: |
+          podman build --build-arg FEDORA_VERSION=${{ matrix.version }} --tag ${{ env.image }} --file Containerfile.${{ matrix.name }}
+
+      - name: Push container
+        run: |
+          podman push ${{ env.image }} ${{ env.registry }}/${{ env.image }}
+
+      - name: Log out of registry
+        run: podman logout ${{ env.registry }}
+
 
   build-os:
     runs-on: ubuntu-latest
+
+    needs: build-kmods
 
     strategy:
       fail-fast: false
@@ -50,7 +84,7 @@ jobs:
 
       - name: Build container
         run: |
-          podman build --build-arg VARIANT=${{ matrix.variant }} --tag ${{ env.image }} --file Containerfile.${{ matrix.variant }}
+          podman build --build-arg FEDORA_VERSION=${{ matrix.version }} --build-arg VARIANT=${{ matrix.variant }} --tag ${{ env.image }} --file Containerfile.${{ matrix.variant }}
 
       - name: Push container
         run: |

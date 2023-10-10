@@ -1,11 +1,9 @@
-ARG SOURCE_IMAGE="${SOURCE_IMAGE}"
+ARG FEDORA_VERSION=${FEDORA_VERSION:-39}
 
-FROM ${SOURCE_IMAGE}
+FROM ghcr.io/fossrob/kmod-build:${FEDORA_VERSION}
 
-
-# FOR KERNELS TO FORCE: # rpm-ostree install --force-replacefiles <pkg>
-#
-
+# FOR KERNELS TO FORCE:
+# rpm-ostree install --force-replacefiles <pkg>
 
 # COPY --from=ghcr.io/fossrob/kmods:38 /var/cache/akmods .
 
