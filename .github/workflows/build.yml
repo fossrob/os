@@ -48,7 +48,7 @@ jobs:
 
       - name: Build container
         run: |
-          podman build --build-arg FEDORA_VERSION=${{ matrix.version }} --tag ${{ env.image }} --file Containerfile.${{ matrix.name }}
+          podman build --cache-from ${{ env.registry }}/${{ env.image }} --build-arg FEDORA_VERSION=${{ matrix.version }} --tag ${{ env.image }} --file Containerfile.${{ matrix.name }}
 
       - name: Push container
         run: |
