@@ -10,15 +10,15 @@ ARG VARIANT
 
 COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-just /
 
-COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_VERSION} /rpms /tmp/akmods-rpms
+COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_VERSION} /rpms /tmp/ublue-akmods-rpms
 
 COPY --from=ghcr.io/fossrob/kmods:${FEDORA_VERSION} /rpms /tmp/akmods-rpms
 
 RUN echo "Installing kmods..." && \
-      rpm-ostree install /tmp/akmods-rpms/ublue-os/ublue-os-akmods*.rpm && \
+      rpm-ostree install /tmp/ublue-akmods-rpms/ublue-os/ublue-os-akmods*.rpm && \
       rpm-ostree install \
-        /tmp/akmods-rpms/kmods/kmod-openrazer*.rpm \
-        /tmp/akmods-rpms/kmods/kmod-v4l2loopback*.rpm \
+        /tmp/akmods-rpms/kmod-openrazer*.rpm \
+        /tmp/akmods-rpms/kmod-v4l2loopback*.rpm \
       && \
     echo "...done!"
 
@@ -30,7 +30,7 @@ RUN echo "Installing nvidia drivers..." && \
       rpm-ostree install \
           xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-{,cuda-,devel-,kmodsrc-,power-}${NVIDIA_FULL_VERSION} \
           xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-libs.i686 nvidia-container-toolkit nvidia-vaapi-driver \
-          /tmp/akmods-rpms/kmods/kmod-${NVIDIA_PACKAGE_NAME}-${KERNEL_VERSION}-${NVIDIA_AKMOD_VERSION}.fc${RELEASE}.rpm \
+          /tmp/akmods-rpms/kmod-nvidia*.rpm \
       && \
       semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp && \
     echo "...done!"
