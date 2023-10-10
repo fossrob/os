@@ -12,6 +12,10 @@ registry:
     set -euo pipefail
     podman container inspect registry >/dev/null 2>&1 || podman run --rm --detach --pull always --publish 5000:5000 --volume ~/docker-registry:/var/lib/registry --name registry registry:latest
 
+list-image container:
+    podman pull --quiet {{container}}
+    podman image save {{container}} | tar --extract --to-stdout --exclude layer.tar '*.tar' | tar --list --verbose
+
 layer-image container_file:
   #!/bin/bash
   set -euo pipefail
