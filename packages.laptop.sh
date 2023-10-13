@@ -12,6 +12,7 @@ INCLUDED_PACKAGES=(
   libva-utils
   lshw
   openssl
+  pipewire-codec-aptx
   powertop
   python3-pip python3-pyyaml
   starship
