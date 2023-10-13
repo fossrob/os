@@ -3,6 +3,7 @@ set -ouex pipefail
 
 INCLUDED_PACKAGES=(
   NetworkManager-openvpn-gnome
+  android-tools
   bat bat-extras fd-find fzf ripgrep the_silver_searcher
   code
   corectrl
