@@ -3,7 +3,6 @@ set -ouex pipefail
 
 INCLUDED_PACKAGES=(
   NetworkManager-openvpn-gnome
-  android-tools
   bat bat-extras fd-find fzf ripgrep the_silver_searcher
   code
   fastfetch
@@ -12,7 +11,7 @@ INCLUDED_PACKAGES=(
   libva-utils
   lshw
   openssl
-  pipewire-codec-aptx
+  # pipewire-codec-aptx
   powertop
   python3-pip python3-pyyaml
   starship

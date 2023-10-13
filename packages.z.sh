@@ -4,7 +4,7 @@ set -ouex pipefail
 INCLUDED_PACKAGES=(
   gnome-shell-extension-dash-to-panel
   gnome-shell-extension-user-theme
-  pipewire-codec-aptx
+  # pipewire-codec-aptx
   powertop
   tlp tlp-rdw
   yaru-theme
