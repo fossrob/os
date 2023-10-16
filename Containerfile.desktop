@@ -10,40 +10,21 @@ ARG VARIANT
 
 COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-just /
 
-COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_VERSION} /rpms /tmp/ublue-akmods-rpms
-
 COPY --from=ghcr.io/fossrob/fedora-kmods:${FEDORA_VERSION} /rpms /tmp/akmods-rpms
 
 RUN echo "Installing kmods..." && \
       mkdir -p /var/lib/alternatives && \
-      rpm-ostree install /tmp/ublue-akmods-rpms/ublue-os/ublue-os-akmods*.rpm && \
       rpm-ostree install \
-        /tmp/akmods-rpms/kmod-openrazer*.rpm \
         /tmp/akmods-rpms/kmod-v4l2loopback*.rpm \
       && \
     echo "...done!"
-
 RUN echo "Installing nvidia drivers..." && \
       mkdir -p /var/lib/alternatives && \
-      curl -sSL https://negativo17.org/repos/fedora-nvidia.repo -o /etc/yum.repos.d/fedora-nvidia.repo && \
       rpm-ostree install \
-        nvidia-driver \
         /tmp/akmods-rpms/kmod-nvidia*.rpm \
+        xorg-x11-drv-nvidia xorg-x11-drv-nvidia-libs.i686 xorg-x11-drv-nvidia-cuda nvidia-vaapi-driver \
       && \
     echo "...done!"
-
-# COPY --from=ghcr.io/ublue-os/akmods-nvidia:main-${FEDORA_VERSION}-${NVIDIA_VERSION} /rpms /tmp/akmods-rpms
-
-# RUN echo "Installing nvidia drivers..." && \
-#       rpm-ostree install /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm && \
-#       source /tmp/akmods-rpms/kmods/nvidia-vars.${NVIDIA_VERSION} && \
-#       rpm-ostree install \
-#           xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-{,cuda-,devel-,kmodsrc-,power-}${NVIDIA_FULL_VERSION} \
-#           xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-libs.i686 nvidia-container-toolkit nvidia-vaapi-driver \
-#           /tmp/akmods-rpms/kmod-nvidia*.rpm \
-#       && \
-#       semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp && \
-#     echo "...done!"
 
 COPY packages.${VARIANT}.sh /tmp/
 
