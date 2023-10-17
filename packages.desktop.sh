@@ -5,11 +5,11 @@ INCLUDED_PACKAGES=(
   NetworkManager-openvpn-gnome
   bat bat-extras fd-find fzf ripgrep the_silver_searcher
   code
-  corectrl
+  # corectrl
   fastfetch
   input-remapper
   kitty
-  libva-utils
+  libva-utils vdpauinfo
   lshw
   nvtop
   openssl

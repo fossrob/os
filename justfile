@@ -9,3 +9,11 @@ build-image variant:
 # list contents of container image
 list-image container:
     podman image save {{container}} | tar --extract --to-stdout --exclude layer.tar '*.tar' | tar --list --verbose
+
+# view added configs with fzf
+config-added:
+    sudo ostree admin config-diff | grep ^A | awk '{print $2}' | fzf --tac --bind "enter:execute(sudo less /etc/{})"
+
+# compare modified configs with fzf
+config-diff:
+    sudo ostree admin config-diff | grep ^M | awk '{print $2}' | fzf --tac --bind "enter:execute(sudo vimdiff /usr/etc/{} /etc/{})"
