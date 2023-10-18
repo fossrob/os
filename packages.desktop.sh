@@ -2,10 +2,10 @@
 set -ouex pipefail
 
 INCLUDED_PACKAGES=(
+  # pipewire-codec-aptx
   NetworkManager-openvpn-gnome
   bat bat-extras fd-find fzf ripgrep the_silver_searcher
   code
-  # corectrl
   fastfetch
   input-remapper
   kitty

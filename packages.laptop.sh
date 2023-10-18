@@ -2,21 +2,21 @@
 set -ouex pipefail
 
 INCLUDED_PACKAGES=(
+  # pipewire-codec-aptx
   NetworkManager-openvpn-gnome
   bat bat-extras fd-find fzf ripgrep the_silver_searcher
   code
   fastfetch
   input-remapper
   kitty
-  libva-utils
+  libva-utils vdpauinfo
   lshw
+  nvtop
   openssl
-  # pipewire-codec-aptx
-  powertop
+  powertop tlp tlp-rdw
   python3-pip python3-pyyaml
   starship
   subscription-manager
-  tlp tlp-rdw
   virt-manager virt-viewer
   wl-clipboard
   xeyes
