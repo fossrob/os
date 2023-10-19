@@ -1,6 +1,12 @@
 # os
 
+## flameshot
 
+workaround to get it to ask for screenshot permission:
+- open flameshot
+- open the config window
+- make sure the config window has focus
+- use the shortcut key combination
 
 https://coreos.github.io/rpm-ostree/administrator-handbook/
 

@@ -9,6 +9,7 @@ INCLUDED_PACKAGES=(
   fastfetch
   input-remapper
   kitty
+  input-leap
   libva-utils vdpauinfo
   lshw
   nvtop
