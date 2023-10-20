@@ -7,6 +7,7 @@ ARG FEDORA_VERSION
 ARG VARIANT
 
 COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-just /
+COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-update-services /
 
 COPY packages.${VARIANT}.sh /tmp/
 

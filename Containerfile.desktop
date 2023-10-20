@@ -9,7 +9,6 @@ ARG NVIDIA_VERSION
 ARG VARIANT
 
 COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-just /
-
 COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-update-services /
 
 COPY --from=ghcr.io/fossrob/fedora-kmods:${FEDORA_VERSION} /rpms /tmp/akmods-rpms
