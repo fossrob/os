@@ -7,9 +7,9 @@ INCLUDED_PACKAGES=(
   bat bat-extras fd-find fzf ripgrep the_silver_searcher
   code
   fastfetch
+  input-leap
   input-remapper
   kitty
-  input-leap
   libva-utils vdpauinfo
   lshw
   nvtop

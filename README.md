@@ -8,6 +8,15 @@ workaround to get it to ask for screenshot permission:
 - make sure the config window has focus
 - use the shortcut key combination
 
+## printer
+
+```
+hp-setup --interactive --type print --auto -x ${IP}
+```
+
+
+
+
 https://coreos.github.io/rpm-ostree/administrator-handbook/
 
 https://coreos.github.io/rpm-ostree/compose-server/

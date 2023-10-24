@@ -6,6 +6,11 @@ registry:
 build-image variant:
     podman build --no-cache --build-arg FEDORA_VERSION=39 --build-arg VARIANT={{variant}} --tag fedora-{{variant}}:39 --file Containerfile.{{variant}}
 
+# push to local registry
+push-image variant:
+    just registry
+    podman push fedora-{{variant}}:39 localhost:5000/fedora-{{variant}}:39
+
 # list contents of container image
 list-image container:
     podman image save {{container}} | tar --extract --to-stdout --exclude layer.tar '*.tar' | tar --list --verbose
