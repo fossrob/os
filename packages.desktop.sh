@@ -2,11 +2,14 @@
 set -ouex pipefail
 
 INCLUDED_PACKAGES=(
+  # bat bat-extras <- homebrew
+  # fastfetch <- homebrew
+  # fd-find fzf <- homebrew
   # pipewire-codec-aptx
+  # ripgrep the_silver_searcher <- homebrew
+  # starship <- homebrew
   NetworkManager-openvpn-gnome
-  bat bat-extras fd-find fzf ripgrep the_silver_searcher
   code
-  fastfetch
   input-leap
   input-remapper
   kitty
@@ -15,7 +18,6 @@ INCLUDED_PACKAGES=(
   nvtop
   openssl
   python3-pip python3-pyyaml
-  starship
   subscription-manager
   virt-manager virt-viewer
   wl-clipboard

@@ -1,10 +1,8 @@
 ARG FEDORA_VERSION=${FEDORA_VERSION:-39}
-ARG VARIANT=${VARIANT:-desktop}
 
 FROM ghcr.io/fossrob/fedora-custom:${FEDORA_VERSION}
 
 ARG FEDORA_VERSION
-ARG VARIANT
 
 COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-just /
 COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-update-services /
@@ -17,10 +15,11 @@ RUN echo "Installing kmods..." && \
       && \
     echo "...done!"
 
-COPY packages.${VARIANT}.sh /tmp/
+COPY packages.*.sh /tmp/
 
 RUN echo "Customising packages..." && \
-      /tmp/packages.${VARIANT}.sh && \
+      /tmp/packages.desktop.sh && \
+      /tmp/packages.laptop.sh && \
     echo "...done!"
 
 RUN echo "Clean up and commit..." && \
