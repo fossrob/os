@@ -10,7 +10,7 @@ INCLUDED_PACKAGES=(
   # starship <- homebrew
   NetworkManager-openvpn-gnome
   code
-  gcc
+  # gcc
   input-leap
   input-remapper
   kitty
