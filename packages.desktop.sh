@@ -9,6 +9,7 @@ INCLUDED_PACKAGES=(
   # ripgrep the_silver_searcher <- homebrew
   # starship <- homebrew
   NetworkManager-openvpn-gnome
+  bootc
   code
   gcc
   input-leap
