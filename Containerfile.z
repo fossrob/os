@@ -10,6 +10,7 @@ COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-update-services /
 COPY packages.*.sh /tmp/
 
 RUN echo "Customising packages..." && \
+      sed -i /etc/yum.repos.d/fedora-updates-testing.repo -re 's/enabled=0/enabled=1/' && \
       /tmp/packages.z.sh && \
     echo "...done!"
 
