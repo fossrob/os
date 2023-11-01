@@ -19,6 +19,7 @@ INCLUDED_PACKAGES=(
   lshw
   nvtop
   openssl
+  podman-compose
   python3-pip python3-pyyaml
   subscription-manager
   virt-manager virt-viewer
