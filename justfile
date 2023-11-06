@@ -4,7 +4,7 @@ registry:
 
 # test local build of variant
 build-image variant:
-    podman build --no-cache --build-arg FEDORA_VERSION=39 --build-arg VARIANT={{variant}} --tag fedora-{{variant}}:39 --file Containerfile.{{variant}}
+    podman build --no-cache --build-arg FEDORA_VERSION=39 --build-arg --tag fedora-{{variant}}:39 --file Containerfile.{{variant}}
 
 # push to local registry
 push-image variant:
