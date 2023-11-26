@@ -1,12 +1,11 @@
 ARG FEDORA_VERSION=${FEDORA_VERSION:-39}
-ARG NVIDIA_VERSION=${NVIDIA_VERSION:-535}
 
 FROM ghcr.io/fossrob/fedora-custom:${FEDORA_VERSION}
 
 ARG FEDORA_VERSION
-ARG NVIDIA_VERSION
 
 COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-just /
+COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-udev-rules /
 COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-update-services /
 
 COPY --from=ghcr.io/fossrob/fedora-kmods:${FEDORA_VERSION} /rpms /tmp/akmods-rpms
@@ -18,12 +17,18 @@ RUN echo "Installing kmods..." && \
         /tmp/akmods-rpms/kmod-v4l2loopback*.rpm \
       && \
     echo "...done!"
+
 RUN echo "Installing nvidia drivers..." && \
       mkdir -p /var/lib/alternatives && \
+      rpm-ostree install rpmfusion-nonfree-release-rawhide && \
+      sed -i /etc/yum.repos.d/rpmfusion-nonfree-rawhide.repo -re '/^\[rpmfusion-nonfree-rawhide\]$/,/^$/{s/enabled=0/enabled=1/}' && \
+      curl -sSl 'https://copr.fedorainfracloud.org/coprs/kwizart/nvidia-driver-rawhide/repo/fedora-rawhide/kwizart-nvidia-driver-rawhide-fedora-rawhide.repo' \
+        > /etc/yum.repos.d/kwizart-nvidia-driver-rawhide-fedora-rawhide.repo && \
       rpm-ostree install \
         /tmp/akmods-rpms/kmod-nvidia*.rpm \
-        xorg-x11-drv-nvidia xorg-x11-drv-nvidia-libs.i686 xorg-x11-drv-nvidia-cuda nvidia-vaapi-driver \
+        xorg-x11-drv-nvidia xorg-x11-drv-nvidia-libs.i686 xorg-x11-drv-nvidia-cuda libva-nvidia-driver \
       && \
+      sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/{rpmfusion-nonfree-rawhide,kwizart-nvidia-driver-rawhide-fedora-rawhide}.repo && \
     echo "...done!"
 
 COPY packages.*.sh /tmp/
