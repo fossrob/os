@@ -22,7 +22,7 @@ INCLUDED_PACKAGES=(
   openssl
   podman-compose
   python3-pip python3-pyyaml
-  socat
+  spice-gtk-tools socat
   subscription-manager
   virt-manager virt-viewer
   wl-clipboard
