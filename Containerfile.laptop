@@ -7,15 +7,6 @@ ARG FEDORA_VERSION
 COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-just /
 COPY --from=ghcr.io/ublue-os/config:latest files/ublue-os-update-services /
 
-COPY --from=ghcr.io/fossrob/fedora-kmods:${FEDORA_VERSION} /rpms /tmp/akmods-rpms
-
-RUN echo "Installing kmods..." && \
-      sed -i /etc/yum.repos.d/fedora-updates-testing.repo -re '/^\[updates-testing\]$/,/^$/{s/enabled=1/enabled=0/}' && \
-      rpm-ostree install \
-        /tmp/akmods-rpms/kmod-v4l2loopback*.rpm \
-      && \
-    echo "...done!"
-
 COPY packages.*.sh /tmp/
 
 RUN echo "Customising packages..." && \
