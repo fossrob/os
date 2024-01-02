@@ -27,6 +27,7 @@ INCLUDED_PACKAGES=(
   virt-manager virt-viewer
   wl-clipboard
   xeyes
+  xrandr
   zsh
 )
 
