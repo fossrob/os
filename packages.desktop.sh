@@ -20,6 +20,7 @@ INCLUDED_PACKAGES=(
   lshw
   nvtop
   openssl
+  openssl1.1
   podman-compose
   python3-pip python3-pyyaml
   spice-gtk-tools socat
