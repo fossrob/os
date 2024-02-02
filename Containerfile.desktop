@@ -20,8 +20,8 @@ RUN echo "Installing kmods..." && \
 
 RUN echo "Installing nvidia drivers..." && \
       mkdir -p /var/lib/alternatives && \
-      rpm-ostree install rpmfusion-nonfree-release-rawhide && \
-      sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/{rpmfusion-nonfree,rpmfusion-nonfree-updates}.repo && \
+      rpm-ostree install rpmfusion-free-release-rawhide rpmfusion-nonfree-release-rawhide && \
+      sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/{rpmfusion-free,rpmfusion-free-updates,rpmfusion-nonfree,rpmfusion-nonfree-updates}.repo && \
       sed -i /etc/yum.repos.d/rpmfusion-nonfree-rawhide.repo -re '/^\[rpmfusion-nonfree-rawhide\]$/,/^$/{s/enabled=0/enabled=1/}' && \
       curl -sSl 'https://copr.fedorainfracloud.org/coprs/kwizart/nvidia-driver-rawhide/repo/fedora-rawhide/kwizart-nvidia-driver-rawhide-fedora-rawhide.repo' \
         > /etc/yum.repos.d/kwizart-nvidia-driver-rawhide-fedora-rawhide.repo && \
@@ -30,6 +30,8 @@ RUN echo "Installing nvidia drivers..." && \
         xorg-x11-drv-nvidia xorg-x11-drv-nvidia-libs.i686 xorg-x11-drv-nvidia-cuda libva-nvidia-driver \
       && \
       sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/{rpmfusion-nonfree-rawhide,kwizart-nvidia-driver-rawhide-fedora-rawhide}.repo && \
+      sed -i /etc/yum.repos.d/rpmfusion-free.repo -re '/^\[rpmfusion-free\]$/,/^$/{s/enabled=0/enabled=1/}' && \
+      sed -i /etc/yum.repos.d/rpmfusion-free-updates.repo -re '/^\[rpmfusion-free-updates\]$/,/^$/{s/enabled=0/enabled=1/}' && \
       sed -i /etc/yum.repos.d/rpmfusion-nonfree.repo -re '/^\[rpmfusion-nonfree\]$/,/^$/{s/enabled=0/enabled=1/}' && \
       sed -i /etc/yum.repos.d/rpmfusion-nonfree-updates.repo -re '/^\[rpmfusion-nonfree-updates\]$/,/^$/{s/enabled=0/enabled=1/}' && \
     echo "...done!"
