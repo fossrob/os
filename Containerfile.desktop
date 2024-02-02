@@ -22,7 +22,7 @@ RUN echo "Installing nvidia drivers..." && \
       mkdir -p /var/lib/alternatives && \
       rpm-ostree install rpmfusion-nonfree-release-rawhide && \
       sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/{rpmfusion-nonfree,rpmfusion-nonfree-updates}.repo && \
-      sed -i /etc/yum.repos.d/rpmfusion-nonfree-rawhide.repo -re '/^\[rpmfusion-nonfree-rawhide\]$/,/^$/{s/enabled=1/enabled=0/}' && \
+      sed -i /etc/yum.repos.d/rpmfusion-nonfree-rawhide.repo -re '/^\[rpmfusion-nonfree-rawhide\]$/,/^$/{s/enabled=0/enabled=1/}' && \
       curl -sSl 'https://copr.fedorainfracloud.org/coprs/kwizart/nvidia-driver-rawhide/repo/fedora-rawhide/kwizart-nvidia-driver-rawhide-fedora-rawhide.repo' \
         > /etc/yum.repos.d/kwizart-nvidia-driver-rawhide-fedora-rawhide.repo && \
       rpm-ostree install \
