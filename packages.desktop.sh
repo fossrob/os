@@ -11,7 +11,7 @@ INCLUDED_PACKAGES=(
   NetworkManager-openvpn-gnome
   android-tools
   bootc
-  code
+  code-1.85.2-1705561377.el7
   gcc
   input-leap
   input-remapper
