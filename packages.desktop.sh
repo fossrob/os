@@ -22,7 +22,6 @@ INCLUDED_PACKAGES=(
   openssl
   openssl1.1
   podman-compose
-  podman-docker
   python3-pip python3-pyyaml
   spice-gtk-tools socat
   subscription-manager
