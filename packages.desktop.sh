@@ -24,6 +24,7 @@ INCLUDED_PACKAGES=(
   podman-compose
   python3-pip python3-pyyaml
   spice-gtk-tools socat
+  steam
   subscription-manager
   virt-manager virt-viewer
   wl-clipboard
