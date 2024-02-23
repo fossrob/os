@@ -14,6 +14,12 @@ RUN echo "Customising packages..." && \
       /tmp/packages.laptop.sh && \
     echo "...done!"
 
+COPY protonvpn.repo /etc/yum.repos.d/
+
+RUN echo "Installing protonvpn..." && \
+      rpm-ostree install proton-vpn-gnome-desktop && \
+    echo "...done!"
+
 RUN echo "Clean up and commit..." && \
       rm -rf /tmp/* /var/* && \
       ostree container commit && \
