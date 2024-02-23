@@ -41,12 +41,12 @@ RUN echo "Installing nvidia drivers..." && \
       rpm-ostree install \
         xorg-x11-drv-nvidia-cuda libva-nvidia-driver \
       && \
+    echo "...done!"
 
-      # rpm-ostree install \
-      #   xorg-x11-drv-nvidia xorg-x11-drv-nvidia-libs.i686 xorg-x11-drv-nvidia-cuda libva-nvidia-driver \
-      # && \
+COPY protonvpn.repo /etc/yum.repos.d/
 
-      # sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/{rpmfusion-nonfree-rawhide,kwizart-nvidia-driver-rawhide-fedora-rawhide}.repo && \
+RUN echo "Installing protonvpn..." && \
+      rpm-ostree install proton-vpn-gnome-desktop && \
     echo "...done!"
 
 
