@@ -2,7 +2,7 @@
 set -ouex pipefail
 
 INCLUDED_PACKAGES=(
-  powertop tlp tlp-rdw
+  powertop tlp tlp-rdw openresolv
 )
 
 EXCLUDED_PACKAGES=(
