@@ -12,6 +12,7 @@ INCLUDED_PACKAGES=(
   android-tools
   bootc
   code
+  corectrl
   gcc
   input-leap
   input-remapper
