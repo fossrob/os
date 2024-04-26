@@ -3,17 +3,20 @@ registry:
     podman container inspect registry >/dev/null 2>&1 || podman run --rm --detach --pull always --publish 5000:5000 --volume ~/docker-registry:/var/lib/registry --name registry registry:latest
 
 # test local build of variant
-build-image variant:
-    podman build --build-arg FEDORA_VERSION=39 --tag fedora-{{ variant }}:39 --file Containerfile.{{ variant }}
+build-image variant version:
+    podman build --build-arg FEDORA_VERSION={{ version }} --tag fedora-{{ variant }}:{{ version }} --file Containerfile.{{ variant }}
 
 # test local build of variant (no-cache)
-build-image-no-cache variant:
-    podman build --no-cache --build-arg FEDORA_VERSION=39 --tag fedora-{{ variant }}:39 --file Containerfile.{{ variant }}
+build-image-no-cache variant version:
+    podman build --no-cache --build-arg FEDORA_VERSION={{ version }} --tag fedora-{{ variant }}:{{ version }} --file Containerfile.{{ variant }}
 
 # push to local registry
-push-image variant:
+push-image variant version:
     just registry
-    podman push fedora-{{variant}}:39 localhost:5000/fedora-{{variant}}:39
+    podman push fedora-{{variant}}:{{ version }} localhost:5000/fedora-{{variant}}:{{ version }}
+
+rebase variant version:
+    rpm-ostree rebase ostree-unverified-registry:localhost:5000/fedora-{{variant}}:{{ version }}
 
 # list contents of container image
 list-image container:
