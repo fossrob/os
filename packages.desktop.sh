@@ -27,7 +27,7 @@ INCLUDED_PACKAGES=(
   spice-gtk-tools socat
   steam
   subscription-manager
-  virt-manager virt-viewer
+  virt-manager virt-viewer virt-install
   wl-clipboard
   xeyes
   xrandr
