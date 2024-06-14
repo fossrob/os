@@ -24,6 +24,7 @@ INCLUDED_PACKAGES=(
   # openssl1.1 <- removed in F40
   podman-compose
   python3-pip python3-pyyaml
+  singularity-ce
   spice-gtk-tools socat
   steam
   subscription-manager
